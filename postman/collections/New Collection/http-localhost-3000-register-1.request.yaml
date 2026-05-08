@@ -1,0 +1,18 @@
+$kind: http-request
+name: http://localhost:3000/register
+url: http://localhost:3000/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"Rinshad\",\r
+
+    \    \"email\": \"mrmuhammedrinshad@gmail.com\",\r
+
+    \    \"password\": \"rinshad214\",\r
+
+    \    \"role\": \"student\"\r
+
+    }"
+order: 4236858070238752
