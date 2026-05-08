@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("./db");
+const QRCode = require("qrcode");
 
 const app = express();
 
@@ -65,6 +66,53 @@ app.post("/login", (req, res) => {
             res.send("Invalid Email or Password");
 
         }
+
+    });
+
+});
+
+
+// CREATE SESSION API
+
+app.post("/create-session", (req, res) => {
+
+    const { teacher_id } = req.body;
+
+    // Generate random session code
+    const sessionCode = Math.random()
+        .toString(36)
+        .substring(2, 8);
+
+    // QR expiry time = 60 seconds
+    const expiry = new Date(Date.now() + 60000);
+
+    const sql = `
+        INSERT INTO sessions
+        (teacher_id, session_code, expires_at)
+        VALUES (?, ?, ?)
+    `;
+
+    db.query(sql, [teacher_id, sessionCode, expiry], (err, result) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("Session Creation Failed");
+        }
+
+        // Generate QR Image
+        QRCode.toDataURL(sessionCode, (err, qrImage) => {
+
+            if (err) {
+                return res.send("QR Generation Failed");
+            }
+
+            res.send({
+                message: "Session Created",
+                session_code: sessionCode,
+                qr: qrImage
+            });
+
+        });
 
     });
 
