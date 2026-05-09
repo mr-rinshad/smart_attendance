@@ -6,6 +6,9 @@ const app = express();
 
 app.use(express.json());
 
+// SERVE FRONTEND FILES
+app.use(express.static("public"));
+
 app.get("/", (req, res) => {
     res.send("Server Running");
 });
@@ -113,6 +116,67 @@ app.post("/create-session", (req, res) => {
             });
 
         });
+
+    });
+
+});
+
+
+// MARK ATTENDANCE API
+
+app.post("/mark-attendance", (req, res) => {
+
+    const { student_id, session_code } = req.body;
+
+    // Find session using session code
+    const findSessionQuery = `
+        SELECT * FROM sessions
+        WHERE session_code = ?
+    `;
+
+    db.query(findSessionQuery, [session_code], (err, sessionResult) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("Database Error");
+        }
+
+        // Check session exists
+        if (sessionResult.length === 0) {
+            return res.send("Invalid QR Code");
+        }
+
+        const session = sessionResult[0];
+
+        // Check QR expiry
+        const currentTime = new Date();
+
+        if (currentTime > session.expires_at) {
+            return res.send("QR Code Expired");
+        }
+
+        // Insert attendance
+        const attendanceQuery = `
+            INSERT INTO attendance
+            (student_id, session_id)
+            VALUES (?, ?)
+        `;
+
+        db.query(
+            attendanceQuery,
+            [student_id, session.id],
+            (err, result) => {
+
+                // Duplicate attendance
+                if (err) {
+                    console.log(err);
+                    return res.send("Attendance Already Marked");
+                }
+
+                res.send("Attendance Marked Successfully");
+
+            }
+        );
 
     });
 
