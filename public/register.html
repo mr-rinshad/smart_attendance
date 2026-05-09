@@ -14,10 +14,22 @@
 <input type="email" id="email" placeholder="Email">
 <br>
 
+<div id="rollNoField">
+
+    <input
+        type="text"
+        id="rollno"
+        placeholder="Roll Number"
+    >
+
+    <br>
+
+</div>
+
 <input type="password" id="password" placeholder="Password">
 <br>
 
-<select id="role">
+<select id="role" onchange="toggleRollNo()">
     <option value="student">Student</option>
     <option value="teacher">Teacher</option>
 </select>

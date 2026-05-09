@@ -6,6 +6,8 @@
 </head>
 <body>
 
+<button onclick="logout()">Logout</button>
+
 <h2>Student Dashboard</h2>
 
 <h3>Scan QR Code</h3>
@@ -13,6 +15,14 @@
 <div id="reader" style="width:300px; margin:auto;"></div>
 
 <p id="result"></p>
+
+<h3>Attendance History</h3>
+
+<div id="attendanceList"></div>
+
+<h3>Attendance Percentage</h3>
+
+<div id="percentageList"></div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="script.js"></script>

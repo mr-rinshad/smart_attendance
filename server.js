@@ -18,23 +18,34 @@ app.get("/", (req, res) => {
 
 app.post("/register", (req, res) => {
 
-    const { name, email, password, role } = req.body;
+    const {
+        name,
+        email,
+        roll_no,
+        password,
+        role
+    } = req.body;
 
     const sql = `
-        INSERT INTO users (name, email, password, role)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO users
+        (name, email, roll_no, password, role)
+        VALUES (?, ?, ?, ?, ?)
     `;
 
-    db.query(sql, [name, email, password, role], (err, result) => {
+    db.query(
+        sql,
+        [name, email, roll_no, password, role],
+        (err, result) => {
 
-        if (err) {
-            console.log(err);
-            return res.send("Registration Failed");
+            if (err) {
+                console.log(err);
+                return res.send("Registration Failed");
+            }
+
+            res.send("User Registered Successfully");
+
         }
-
-        res.send("User Registered Successfully");
-
-    });
+    );
 
 });
 
@@ -79,48 +90,83 @@ app.post("/login", (req, res) => {
 
 app.post("/create-session", (req, res) => {
 
-    const { teacher_id } = req.body;
+    const {
+        teacher_id,
+        subject_id
+    } = req.body;
 
     // Generate random session code
     const sessionCode = Math.random()
         .toString(36)
         .substring(2, 8);
 
-    // QR expiry time = 60 seconds
-    const expiry = new Date(Date.now() + 60000);
+    // QR expiry time = 60 sec
+    const expiry =
+        new Date(Date.now() + 60000);
 
     const sql = `
         INSERT INTO sessions
-        (teacher_id, session_code, expires_at)
-        VALUES (?, ?, ?)
+        (
+            teacher_id,
+            session_code,
+            expires_at,
+            subject_id
+        )
+        VALUES (?, ?, ?, ?)
     `;
 
-    db.query(sql, [teacher_id, sessionCode, expiry], (err, result) => {
-
-        if (err) {
-            console.log(err);
-            return res.send("Session Creation Failed");
-        }
-
-        // Generate QR Image
-        QRCode.toDataURL(sessionCode, (err, qrImage) => {
+    db.query(
+        sql,
+        [
+            teacher_id,
+            sessionCode,
+            expiry,
+            subject_id
+        ],
+        (err, result) => {
 
             if (err) {
-                return res.send("QR Generation Failed");
+
+                console.log(err);
+
+                return res.send(
+                    "Session Creation Failed"
+                );
+
             }
 
-            res.send({
-                message: "Session Created",
-                session_code: sessionCode,
-                qr: qrImage
-            });
+            QRCode.toDataURL(
+                sessionCode,
+                (err, qrImage) => {
 
-        });
+                    if (err) {
 
-    });
+                        return res.send(
+                            "QR Generation Failed"
+                        );
+
+                    }
+
+                    res.send({
+
+                        message:
+                            "Session Created",
+
+                        session_code:
+                            sessionCode,
+
+                        qr:
+                            qrImage
+
+                    });
+
+                }
+            );
+
+        }
+    );
 
 });
-
 
 // MARK ATTENDANCE API
 
@@ -177,6 +223,96 @@ app.post("/mark-attendance", (req, res) => {
 
             }
         );
+
+    });
+
+});
+
+
+// ATTENDANCE REPORT API
+
+app.get("/attendance-report/:student_id", (req, res) => {
+
+    const studentId = req.params.student_id;
+
+    const sql = `
+        SELECT attendance.id,
+               sessions.session_code,
+               attendance.marked_at
+        FROM attendance
+        JOIN sessions
+        ON attendance.session_id = sessions.id
+        WHERE attendance.student_id = ?
+        ORDER BY attendance.marked_at DESC
+    `;
+
+    db.query(sql, [studentId], (err, result) => {
+
+        if (err) {
+            console.log(err);
+            return res.send("Error");
+        }
+
+        res.json(result);
+
+    });
+
+});
+
+//attendance-percentage API
+
+app.get("/attendance-percentage/:student_id", (req, res) => {
+
+    const studentId = req.params.student_id;
+
+    const sql = `
+
+        SELECT
+
+            subjects.subject_name,
+
+            COUNT(DISTINCT sessions.id)
+            AS total_classes,
+
+            COUNT(attendance.id)
+            AS present_count,
+
+            ROUND(
+
+                (
+                    COUNT(attendance.id)
+                    /
+                    COUNT(DISTINCT sessions.id)
+                ) * 100,
+
+                2
+
+            ) AS percentage
+
+        FROM subjects
+
+        LEFT JOIN sessions
+        ON subjects.id = sessions.subject_id
+
+        LEFT JOIN attendance
+        ON attendance.session_id = sessions.id
+        AND attendance.student_id = ?
+
+        GROUP BY subjects.id
+
+    `;
+
+    db.query(sql, [studentId], (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        res.json(result);
 
     });
 
