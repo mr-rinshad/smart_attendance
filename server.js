@@ -229,35 +229,7 @@ app.post("/mark-attendance", (req, res) => {
 });
 
 
-// ATTENDANCE REPORT API
 
-app.get("/attendance-report/:student_id", (req, res) => {
-
-    const studentId = req.params.student_id;
-
-    const sql = `
-        SELECT attendance.id,
-               sessions.session_code,
-               attendance.marked_at
-        FROM attendance
-        JOIN sessions
-        ON attendance.session_id = sessions.id
-        WHERE attendance.student_id = ?
-        ORDER BY attendance.marked_at DESC
-    `;
-
-    db.query(sql, [studentId], (err, result) => {
-
-        if (err) {
-            console.log(err);
-            return res.send("Error");
-        }
-
-        res.json(result);
-
-    });
-
-});
 
 //attendance-percentage API
 

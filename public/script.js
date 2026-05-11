@@ -254,36 +254,6 @@ function startScanner() {
 }
 
 
-// LOAD ATTENDANCE HISTORY
-function loadAttendanceHistory() {
-
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    fetch(`${API}/attendance-report/${user.id}`)
-    .then(res => res.json())
-    .then(data => {
-
-        let html = "";
-
-        data.forEach(item => {
-
-            html += `
-                <div>
-                    Session: ${item.session_code}
-                    <br>
-                    Time: ${item.marked_at}
-                    <hr>
-                </div>
-            `;
-
-        });
-
-        document.getElementById("attendanceList")
-            .innerHTML = html;
-
-    });
-
-}
 
 
 // LOAD ATTENDANCE PERCENTAGE
@@ -344,8 +314,6 @@ function loadAttendancePercentage() {
 if (window.location.pathname.includes("student.html")) {
 
     startScanner();
-
-    loadAttendanceHistory();
 
     loadAttendancePercentage();
 
