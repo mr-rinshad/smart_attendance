@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("./db");
 const QRCode = require("qrcode");
+const PDFDocument = require("pdfkit");
 
 const app = express();
 
@@ -92,17 +93,17 @@ app.post("/create-session", (req, res) => {
 
     const {
         teacher_id,
-        subject_id
+        subject_id,
+        expiry_minutes
     } = req.body;
 
-    // Generate random session code
     const sessionCode = Math.random()
         .toString(36)
         .substring(2, 8);
 
-    // QR expiry time = 60 sec
-    const expiry =
-        new Date(Date.now() + 60000);
+    const expiry = new Date(
+        Date.now() + expiry_minutes * 60000
+    );
 
     const sql = `
         INSERT INTO sessions
@@ -110,9 +111,10 @@ app.post("/create-session", (req, res) => {
             teacher_id,
             session_code,
             expires_at,
-            subject_id
+            subject_id,
+            expiry_minutes
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
     `;
 
     db.query(
@@ -121,7 +123,8 @@ app.post("/create-session", (req, res) => {
             teacher_id,
             sessionCode,
             expiry,
-            subject_id
+            subject_id,
+            expiry_minutes
         ],
         (err, result) => {
 
@@ -139,21 +142,13 @@ app.post("/create-session", (req, res) => {
                 sessionCode,
                 (err, qrImage) => {
 
-                    if (err) {
-
-                        return res.send(
-                            "QR Generation Failed"
-                        );
-
-                    }
-
                     res.send({
 
                         message:
                             "Session Created",
 
-                        session_code:
-                            sessionCode,
+                        session_id:
+                            result.insertId,
 
                         qr:
                             qrImage
@@ -168,6 +163,7 @@ app.post("/create-session", (req, res) => {
 
 });
 
+
 // MARK ATTENDANCE API
 
 app.post("/mark-attendance", (req, res) => {
@@ -180,58 +176,95 @@ app.post("/mark-attendance", (req, res) => {
         WHERE session_code = ?
     `;
 
-    db.query(findSessionQuery, [session_code], (err, sessionResult) => {
+    db.query(
+        findSessionQuery,
+        [session_code],
+        (err, sessionResult) => {
+
+            if (err) {
+                console.log(err);
+                return res.send("Database Error");
+            }
+
+            // Check session exists
+            if (sessionResult.length === 0) {
+                return res.send("Invalid QR Code");
+            }
+
+            const session = sessionResult[0];
+
+            // Check QR expiry
+            const currentTime = new Date();
+
+            if (currentTime > session.expires_at) {
+                return res.send("QR Code Expired");
+            }
+
+            // Insert attendance
+            const attendanceQuery = `
+                INSERT INTO attendance
+                (student_id, session_id)
+                VALUES (?, ?)
+            `;
+
+            db.query(
+                attendanceQuery,
+                [student_id, session.id],
+                (err, result) => {
+
+                    // Duplicate attendance
+                    if (err) {
+                        console.log(err);
+                        return res.send(
+                            "Attendance Already Marked"
+                        );
+                    }
+
+                    res.send(
+                        "Attendance Marked Successfully"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+});
+
+
+// ATTENDANCE REPORT API
+
+app.get("/attendance-report/:student_id", (req, res) => {
+
+    const studentId = req.params.student_id;
+
+    const sql = `
+        SELECT attendance.id,
+               sessions.session_code,
+               attendance.marked_at
+        FROM attendance
+        JOIN sessions
+        ON attendance.session_id = sessions.id
+        WHERE attendance.student_id = ?
+        ORDER BY attendance.marked_at DESC
+    `;
+
+    db.query(sql, [studentId], (err, result) => {
 
         if (err) {
             console.log(err);
-            return res.send("Database Error");
+            return res.send("Error");
         }
 
-        // Check session exists
-        if (sessionResult.length === 0) {
-            return res.send("Invalid QR Code");
-        }
-
-        const session = sessionResult[0];
-
-        // Check QR expiry
-        const currentTime = new Date();
-
-        if (currentTime > session.expires_at) {
-            return res.send("QR Code Expired");
-        }
-
-        // Insert attendance
-        const attendanceQuery = `
-            INSERT INTO attendance
-            (student_id, session_id)
-            VALUES (?, ?)
-        `;
-
-        db.query(
-            attendanceQuery,
-            [student_id, session.id],
-            (err, result) => {
-
-                // Duplicate attendance
-                if (err) {
-                    console.log(err);
-                    return res.send("Attendance Already Marked");
-                }
-
-                res.send("Attendance Marked Successfully");
-
-            }
-        );
+        res.json(result);
 
     });
 
 });
 
 
-
-
-//attendance-percentage API
+// ATTENDANCE PERCENTAGE API
 
 app.get("/attendance-percentage/:student_id", (req, res) => {
 
@@ -285,6 +318,183 @@ app.get("/attendance-percentage/:student_id", (req, res) => {
         }
 
         res.json(result);
+
+    });
+
+});
+
+
+// DOWNLOAD PDF API
+
+app.get("/download-attendance/:session_id", (req, res) => {
+
+    const sessionId = req.params.session_id;
+
+    const sql = `
+
+        SELECT
+
+            users.roll_no,
+            users.name
+
+        FROM attendance
+
+        JOIN users
+        ON attendance.student_id = users.id
+
+        WHERE attendance.session_id = ?
+
+    `;
+
+    db.query(sql, [sessionId], (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        // ===== CREATE PDF =====
+
+        const doc = new PDFDocument({
+            margin: 50
+        });
+
+        // ===== RESPONSE HEADERS =====
+
+        res.setHeader(
+            "Content-Type",
+            "application/pdf"
+        );
+
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=attendance-report.pdf"
+        );
+
+        // ===== PIPE PDF =====
+
+        doc.pipe(res);
+
+        // ===== TITLE =====
+
+        doc
+            .fontSize(28)
+            .font("Helvetica-Bold")
+            .text(
+                "Attendance Report",
+                {
+                    align: "center",
+                    underline: true
+                }
+            );
+
+        doc.moveDown(2);
+
+        // ===== TABLE SETTINGS =====
+
+        const tableX = 80;
+
+        const tableY = 180;
+
+        const tableWidth = 450;
+
+        const rowHeight = 40;
+
+        const col1Width = 150;
+
+        const col2Width = 300;
+
+        // Header + student rows
+        const totalRows = result.length + 1;
+
+        const tableHeight =
+            totalRows * rowHeight;
+
+        // ===== OUTER TABLE BORDER =====
+
+        doc.rect(
+            tableX,
+            tableY,
+            tableWidth,
+            tableHeight
+        ).stroke();
+
+        // ===== VERTICAL DIVIDER =====
+
+        doc.moveTo(
+            tableX + col1Width,
+            tableY
+        )
+        .lineTo(
+            tableX + col1Width,
+            tableY + tableHeight
+        )
+        .stroke();
+
+        // ===== HORIZONTAL ROW LINES =====
+
+        for (let i = 1; i < totalRows; i++) {
+
+            const y =
+                tableY + (i * rowHeight);
+
+            doc.moveTo(tableX, y)
+               .lineTo(tableX + tableWidth, y)
+               .stroke();
+
+        }
+
+        // ===== HEADER TEXT =====
+
+        doc
+            .fontSize(16)
+            .font("Helvetica-Bold");
+
+        doc.text(
+            "Roll No",
+            tableX + 40,
+            tableY + 12
+        );
+
+        doc.text(
+            "Student Name",
+            tableX + col1Width + 70,
+            tableY + 12
+        );
+
+        // ===== STUDENT DATA =====
+
+        doc.font("Helvetica");
+
+        let currentY =
+            tableY + rowHeight;
+
+        result.forEach(student => {
+
+            // Roll No
+            doc.text(
+                student.roll_no || "-",
+                tableX + 50,
+                currentY + 12
+            );
+
+            // Student Name
+            doc.text(
+                student.name,
+                tableX + col1Width + 60,
+                currentY + 12
+            );
+
+            currentY += rowHeight;
+
+        });
+
+        // ===== FINISH PDF =====
+
+        doc.end();
 
     });
 

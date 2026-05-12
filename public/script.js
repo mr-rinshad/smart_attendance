@@ -124,6 +124,9 @@ function createSession() {
     const subjectId =
         document.getElementById("subjectSelect").value;
 
+    const expiryMinutes =
+        document.getElementById("expiryTime").value;
+
     fetch(`${API}/create-session`, {
 
         method: "POST",
@@ -136,18 +139,74 @@ function createSession() {
 
             teacher_id: user.id,
 
-            subject_id: subjectId
+            subject_id: subjectId,
+
+            expiry_minutes: expiryMinutes
 
         })
 
     })
     .then(res => res.json())
+
     .then(data => {
 
         document.getElementById("qrImage").src =
             data.qr;
 
+        startCountdown(
+            expiryMinutes * 60,
+            data.session_id
+        );
+
     });
+
+}
+
+// coutdown timer
+function startCountdown(seconds, sessionId) {
+
+    const timerText =
+        document.getElementById("timerText");
+
+    const downloadBtn =
+        document.getElementById("downloadBtn");
+
+    const interval = setInterval(() => {
+
+        const mins =
+            Math.floor(seconds / 60);
+
+        const secs =
+            seconds % 60;
+
+        timerText.innerText =
+            `QR Expires In: ${mins}:${secs
+                .toString()
+                .padStart(2, "0")}`;
+
+        seconds--;
+
+        if (seconds < 0) {
+
+            clearInterval(interval);
+
+            timerText.innerText =
+                "QR Expired";
+
+            downloadBtn.style.display =
+                "inline-block";
+
+            downloadBtn.onclick = () => {
+
+                window.open(
+                    `${API}/download-attendance/${sessionId}`
+                );
+
+            };
+
+        }
+
+    }, 1000);
 
 }
 
@@ -310,7 +369,7 @@ function loadAttendancePercentage() {
 }
 
 
-// AUTO START SCANNER + HISTORY
+// AUTO START SCANNER 
 if (window.location.pathname.includes("student.html")) {
 
     startScanner();

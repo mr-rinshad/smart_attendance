@@ -22,6 +22,18 @@
 
 </select>
 
+<br>
+
+<select id="expiryTime">
+
+    <option value="1">1 Minute</option>
+
+    <option value="3">3 Minutes</option>
+
+    <option value="5">5 Minutes</option>
+
+</select>
+
 <br><br>
 
 <button onclick="createSession()">
@@ -31,6 +43,14 @@
 <br><br>
 
 <img id="qrImage" width="300">
+<h3 id="timerText"></h3>
+
+<button
+    id="downloadBtn"
+    style="display:none;"
+>
+    Download Attendance PDF
+</button>
 
 <script src="script.js"></script>
 
