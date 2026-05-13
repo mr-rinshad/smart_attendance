@@ -10,15 +10,43 @@
 
 <h2>Student Dashboard</h2>
 
-<h3>Scan QR Code</h3>
+<button onclick="openScanner()">
 
-<div id="reader" style="width:300px; margin:auto;"></div>
+    Scan QR Attendance
+
+</button>
+
+<br><br>
+
+<div
+    id="reader"
+    style="width:300px; margin:auto;"
+></div>
 
 <p id="result"></p>
 
-<h3>Attendance Percentage</h3>
+<h3 id="overallAttendance">
 
-<div id="percentageList"></div>
+    Overall Attendance: 0%
+
+</h3>
+
+<button onclick="toggleAttendanceDetails()">
+
+    View Attendance Details
+
+</button>
+
+<br><br>
+
+<div
+    id="percentageContainer"
+    style="display:none;"
+>
+
+    <div id="percentageList"></div>
+
+</div>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="script.js"></script>

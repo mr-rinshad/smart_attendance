@@ -324,6 +324,71 @@ app.get("/attendance-percentage/:student_id", (req, res) => {
 });
 
 
+//overall attendance api
+app.get("/overall-attendance/:student_id", (req, res) => {
+
+    const studentId = req.params.student_id;
+
+    const sql = `
+
+        SELECT
+
+            COUNT(attendance.id)
+            AS total_present,
+
+            (
+                SELECT COUNT(*)
+                FROM sessions
+            )
+            AS total_classes
+
+        FROM attendance
+
+        WHERE attendance.student_id = ?
+
+    `;
+
+    db.query(sql, [studentId], (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        const present =
+            result[0].total_present;
+
+        const total =
+            result[0].total_classes;
+
+        let percentage = 0;
+
+        if (total > 0) {
+
+            percentage =
+                ((present / total) * 100)
+                .toFixed(2);
+
+        }
+
+        res.json({
+
+            total_present: present,
+
+            total_classes: total,
+
+            percentage: percentage
+
+        });
+
+    });
+
+});
+
+
 // DOWNLOAD PDF API
 
 app.get("/download-attendance/:session_id", (req, res) => {

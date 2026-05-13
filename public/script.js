@@ -162,7 +162,8 @@ function createSession() {
 
 }
 
-// coutdown timer
+
+// COUNTDOWN TIMER
 function startCountdown(seconds, sessionId) {
 
     const timerText =
@@ -238,11 +239,15 @@ function markAttendance() {
 
 
 // QR SCANNER
-function startScanner() {
+function openScanner() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user =
+        JSON.parse(localStorage.getItem("user"));
 
     let scanned = false;
+
+    const html5QrCode =
+        new Html5Qrcode("reader");
 
     function onScanSuccess(decodedText) {
 
@@ -251,68 +256,96 @@ function startScanner() {
         scanned = true;
 
         document.getElementById("result")
-            .innerText = "QR Detected: " + decodedText;
+            .innerText =
+            "QR Detected: " + decodedText;
 
-        // Stop scanner after scan
         html5QrCode.stop();
 
-        // Send attendance request
         fetch(`${API}/mark-attendance`, {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
+
                 student_id: user.id,
+
                 session_code: decodedText
+
             })
+
         })
         .then(res => res.text())
         .then(data => {
 
             alert(data);
 
-            // Reload attendance history
-            loadAttendanceHistory();
-
             // Reload percentage
             loadAttendancePercentage();
+
+            loadOverallAttendance();
 
         });
 
     }
 
     function onScanError(error) {
-        // Ignore scan errors
+
+        // Ignore errors
+
     }
 
-    const html5QrCode =
-        new Html5Qrcode("reader");
-
     Html5Qrcode.getCameras()
-        .then(devices => {
+    .then(devices => {
 
-            if (devices && devices.length) {
+        if (devices.length) {
 
-                const cameraId = devices[0].id;
+            html5QrCode.start(
 
-                html5QrCode.start(
-                    cameraId,
-                    {
-                        fps: 10,
-                        qrbox: 250
-                    },
-                    onScanSuccess,
-                    onScanError
-                );
+                devices[0].id,
 
-            }
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
 
-        });
+                onScanSuccess,
+
+                onScanError
+
+            );
+
+        }
+
+    });
 
 }
 
 
+// TOGGLE ATTENDANCE DETAILS
+function toggleAttendanceDetails() {
+
+    const container =
+        document.getElementById(
+            "percentageContainer"
+        );
+
+    if (
+        container.style.display === "none"
+    ) {
+
+        container.style.display = "block";
+
+    } else {
+
+        container.style.display = "none";
+
+    }
+
+}
 
 
 // LOAD ATTENDANCE PERCENTAGE
@@ -321,7 +354,9 @@ function loadAttendancePercentage() {
     const user =
         JSON.parse(localStorage.getItem("user"));
 
-    fetch(`${API}/attendance-percentage/${user.id}`)
+    fetch(
+        `${API}/attendance-percentage/${user.id}`
+    )
 
     .then(res => res.json())
 
@@ -333,26 +368,32 @@ function loadAttendancePercentage() {
 
             html += `
 
-                <div>
+                <div
+                    style="
+                        border: 1px solid #ccc;
+                        padding: 15px;
+                        margin: 10px;
+                        border-radius: 8px;
+                        background: #f9f9f9;
+                    "
+                >
 
                     <h4>
                         ${item.subject_name}
                     </h4>
 
-                    Total Classes:
-                    ${item.total_classes}
-
-                    <br>
-
                     Present:
                     ${item.present_count}
 
-                    <br>
+                    <br><br>
+
+                    Total Classes:
+                    ${item.total_classes}
+
+                    <br><br>
 
                     Percentage:
                     ${item.percentage || 0}%
-
-                    <hr>
 
                 </div>
 
@@ -369,12 +410,40 @@ function loadAttendancePercentage() {
 }
 
 
-// AUTO START SCANNER 
-if (window.location.pathname.includes("student.html")) {
+// LOAD OVERALL ATTENDANCE
+function loadOverallAttendance() {
 
-    startScanner();
+    const user =
+        JSON.parse(localStorage.getItem("user"));
+
+    fetch(`${API}/overall-attendance/${user.id}`)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        document.getElementById(
+            "overallAttendance"
+        ).innerText =
+
+            `Overall Attendance:
+            ${data.percentage}%`;
+
+    });
+
+}
+
+
+// AUTO LOAD STUDENT DATA
+if (
+    window.location.pathname.includes(
+        "student.html"
+    )
+) {
 
     loadAttendancePercentage();
+
+    loadOverallAttendance();
 
 }
 
