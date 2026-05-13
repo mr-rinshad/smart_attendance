@@ -1,5 +1,7 @@
 const API = "http://localhost:3000";
 
+let currentSessionId = null;
+
 
 // REGISTER
 function register() {
@@ -81,33 +83,57 @@ function toggleRollNo() {
 function login() {
 
     const data = {
-        email: document.getElementById("loginEmail").value,
-        password: document.getElementById("loginPassword").value
+
+        email:
+            document.getElementById(
+                "loginEmail"
+            ).value,
+
+        password:
+            document.getElementById(
+                "loginPassword"
+            ).value
+
     };
 
     fetch(`${API}/login`, {
+
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
+
         body: JSON.stringify(data)
+
     })
     .then(res => res.json())
     .then(data => {
 
         if (data.message === "Login Success") {
 
-            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
 
             // Redirect by role
             if (data.user.role === "teacher") {
-                window.location.href = "teacher.html";
+
+                window.location.href =
+                    "teacher.html";
+
             } else {
-                window.location.href = "student.html";
+
+                window.location.href =
+                    "student.html";
+
             }
 
         } else {
+
             alert("Invalid Login");
+
         }
 
     });
@@ -122,10 +148,14 @@ function createSession() {
         JSON.parse(localStorage.getItem("user"));
 
     const subjectId =
-        document.getElementById("subjectSelect").value;
+        document.getElementById(
+            "subjectSelect"
+        ).value;
 
     const expiryMinutes =
-        document.getElementById("expiryTime").value;
+        document.getElementById(
+            "expiryTime"
+        ).value;
 
     fetch(`${API}/create-session`, {
 
@@ -150,11 +180,19 @@ function createSession() {
 
     .then(data => {
 
-        document.getElementById("qrImage").src =
-            data.qr;
+        currentSessionId =
+            data.session_id;
+
+        document.getElementById(
+            "qrImage"
+        ).src = data.qr;
 
         startCountdown(
             expiryMinutes * 60,
+            data.session_id
+        );
+
+        loadSessionAttendance(
             data.session_id
         );
 
@@ -167,10 +205,20 @@ function createSession() {
 function startCountdown(seconds, sessionId) {
 
     const timerText =
-        document.getElementById("timerText");
+        document.getElementById(
+            "timerText"
+        );
 
     const downloadBtn =
-        document.getElementById("downloadBtn");
+        document.getElementById(
+            "downloadBtn"
+        );
+
+    const refreshInterval = setInterval(() => {
+
+        loadSessionAttendance(sessionId);
+
+    }, 3000);
 
     const interval = setInterval(() => {
 
@@ -190,6 +238,8 @@ function startCountdown(seconds, sessionId) {
         if (seconds < 0) {
 
             clearInterval(interval);
+
+            clearInterval(refreshInterval);
 
             timerText.innerText =
                 "QR Expired";
@@ -212,27 +262,154 @@ function startCountdown(seconds, sessionId) {
 }
 
 
+// LOAD SESSION ATTENDANCE
+function loadSessionAttendance(sessionId) {
+
+    fetch(
+        `${API}/session-attendance/${sessionId}`
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        let html = `
+
+            <table
+                border="1"
+                cellpadding="10"
+                style="
+                    margin:auto;
+                    border-collapse:collapse;
+                "
+            >
+
+                <tr>
+
+                    <th>Roll No</th>
+
+                    <th>Name</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+        `;
+
+        data.forEach(student => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${student.roll_no}
+                    </td>
+
+                    <td>
+                        ${student.name}
+                    </td>
+
+                    <td>
+
+                        <button
+                            onclick="
+                                removeAttendance(
+                                    ${student.attendance_id},
+                                    ${sessionId}
+                                )
+                            "
+                        >
+
+                            Remove
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        html += `</table>`;
+
+        document.getElementById(
+            "sessionAttendance"
+        ).innerHTML = html;
+
+    });
+
+}
+
+
+// REMOVE ATTENDANCE
+function removeAttendance(
+    attendanceId,
+    sessionId
+) {
+
+    const confirmDelete =
+        confirm(
+            "Remove this attendance?"
+        );
+
+    if (!confirmDelete) return;
+
+    fetch(
+        `${API}/remove-attendance/${attendanceId}`,
+        {
+            method: "DELETE"
+        }
+    )
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        alert(data);
+
+        loadSessionAttendance(sessionId);
+
+    });
+
+}
+
+
 // MANUAL ATTENDANCE
 function markAttendance() {
 
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user =
+        JSON.parse(localStorage.getItem("user"));
 
     const sessionCode =
-        document.getElementById("sessionCode").value;
+        document.getElementById(
+            "sessionCode"
+        ).value;
 
     fetch(`${API}/mark-attendance`, {
+
         method: "POST",
+
         headers: {
             "Content-Type": "application/json"
         },
+
         body: JSON.stringify({
+
             student_id: user.id,
+
             session_code: sessionCode
+
         })
+
     })
     .then(res => res.text())
     .then(data => {
+
         alert(data);
+
     });
 
 }
@@ -255,8 +432,9 @@ function openScanner() {
 
         scanned = true;
 
-        document.getElementById("result")
-            .innerText =
+        document.getElementById(
+            "result"
+        ).innerText =
             "QR Detected: " + decodedText;
 
         html5QrCode.stop();
@@ -283,7 +461,6 @@ function openScanner() {
 
             alert(data);
 
-            // Reload percentage
             loadAttendancePercentage();
 
             loadOverallAttendance();
@@ -337,11 +514,13 @@ function toggleAttendanceDetails() {
         container.style.display === "none"
     ) {
 
-        container.style.display = "block";
+        container.style.display =
+            "block";
 
     } else {
 
-        container.style.display = "none";
+        container.style.display =
+            "none";
 
     }
 
@@ -416,7 +595,9 @@ function loadOverallAttendance() {
     const user =
         JSON.parse(localStorage.getItem("user"));
 
-    fetch(`${API}/overall-attendance/${user.id}`)
+    fetch(
+        `${API}/overall-attendance/${user.id}`
+    )
 
     .then(res => res.json())
 
@@ -427,7 +608,7 @@ function loadOverallAttendance() {
         ).innerText =
 
             `Overall Attendance:
-            ${data.percentage}%`;
+${data.percentage}%`;
 
     });
 
@@ -449,7 +630,11 @@ if (
 
 
 // AUTO TOGGLE ROLL NUMBER FIELD
-if (window.location.pathname.includes("register.html")) {
+if (
+    window.location.pathname.includes(
+        "register.html"
+    )
+) {
 
     toggleRollNo();
 
@@ -461,6 +646,7 @@ function logout() {
 
     localStorage.removeItem("user");
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 
 }

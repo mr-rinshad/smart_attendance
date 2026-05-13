@@ -565,6 +565,78 @@ app.get("/download-attendance/:session_id", (req, res) => {
 
 });
 
+// session attendance details api
+app.get("/session-attendance/:session_id", (req, res) => {
+
+    const sessionId = req.params.session_id;
+
+    const sql = `
+
+        SELECT
+
+            attendance.id AS attendance_id,
+
+            users.roll_no,
+
+            users.name
+
+        FROM attendance
+
+        JOIN users
+        ON attendance.student_id = users.id
+
+        WHERE attendance.session_id = ?
+
+    `;
+
+    db.query(sql, [sessionId], (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        res.json(result);
+
+    });
+
+});
+
+
+//romove attendance api
+app.delete("/remove-attendance/:attendance_id", (req, res) => {
+
+    const attendanceId =
+        req.params.attendance_id;
+
+    const sql = `
+        DELETE FROM attendance
+        WHERE id = ?
+    `;
+
+    db.query(sql, [attendanceId], (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send(
+                "Failed To Remove"
+            );
+
+        }
+
+        res.send(
+            "Attendance Removed"
+        );
+
+    });
+
+});
+
 
 app.listen(3000, () => {
     console.log("Server running on port 3000");
