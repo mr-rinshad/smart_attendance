@@ -595,25 +595,36 @@ function loadOverallAttendance() {
     const user =
         JSON.parse(localStorage.getItem("user"));
 
-    fetch(
-        `${API}/overall-attendance/${user.id}`
-    )
+    fetch(`${API}/overall-attendance/${user.id}`)
 
     .then(res => res.json())
 
     .then(data => {
 
-        document.getElementById(
-            "overallAttendance"
-        ).innerText =
+        const percentage =
+            parseFloat(data.percentage) || 0;
 
-            `Overall Attendance:
-${data.percentage}%`;
+        // Full circle size
+        const circumference = 440;
+
+        // Calculate filled part
+        const offset =
+            circumference -
+            (percentage / 100) * circumference;
+
+        // Update progress circle
+        document.getElementById(
+            "progressCircle"
+        ).style.strokeDashoffset = offset;
+
+        // Update percentage text
+        document.getElementById(
+            "circleText"
+        ).innerText = `${percentage}%`;
 
     });
 
 }
-
 
 // AUTO LOAD STUDENT DATA
 if (

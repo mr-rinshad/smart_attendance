@@ -35,3 +35,65 @@ button:hover {
 #attendanceList {
     margin-top: 20px;
 }
+
+.circle-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    margin-top: 30px;
+
+}
+
+.attendance-heading {
+
+    margin-bottom: 15px;
+
+    font-size: 28px;
+
+    color: #333;
+
+}
+
+.circle-chart {
+
+    position: relative;
+
+    width: 180px;
+
+    height: 180px;
+
+}
+
+.circle-chart svg {
+
+    transform: rotate(0deg);
+
+}
+
+#circleText {
+
+    position: absolute;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    font-size: 26px;
+
+    font-weight: bold;
+
+    color: #333;
+
+}
+
+#progressCircle {
+
+    transition: stroke-dashoffset 1s ease;
+
+}

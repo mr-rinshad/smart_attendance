@@ -25,11 +25,50 @@
 
 <p id="result"></p>
 
-<h3 id="overallAttendance">
+<div class="circle-container">
 
-    Overall Attendance: 0%
+    <h2 class="attendance-heading">
+        Overall Attendance
+    </h2>
 
-</h3>
+    <div class="circle-chart">
+
+        <svg width="180" height="180">
+
+            <!-- Background Circle -->
+            <circle
+                cx="90"
+                cy="90"
+                r="70"
+                stroke="#e6e6e6"
+                stroke-width="12"
+                fill="none"
+            ></circle>
+
+            <!-- Progress Circle -->
+            <circle
+                id="progressCircle"
+                cx="90"
+                cy="90"
+                r="70"
+                stroke="#4caf50"
+                stroke-width="12"
+                fill="none"
+                stroke-linecap="round"
+                stroke-dasharray="440"
+                stroke-dashoffset="440"
+                transform="rotate(-90 90 90)"
+            ></circle>
+
+        </svg>
+
+        <div id="circleText">
+            0%
+        </div>
+
+    </div>
+
+</div>
 
 <button onclick="toggleAttendanceDetails()">
 
