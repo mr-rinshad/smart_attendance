@@ -7,6 +7,7 @@ const app = express();
 
 app.use(express.json());
 
+
 // SERVE FRONTEND FILES
 app.use(express.static("public"));
 
