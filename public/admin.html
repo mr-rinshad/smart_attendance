@@ -18,10 +18,26 @@
         rel="stylesheet"
         href="style.css"
     >
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
 
 </head>
 
 <body>
+    <button
+    class="home-btn"
+    onclick="
+        window.location.href='index.html'
+    "
+>
+
+    <i class="fa-solid fa-house"></i>
+
+    Home
+
+</button>
 
     <h1>
         Admin Dashboard
@@ -83,32 +99,43 @@
         placeholder="Enter Subject Name"
     >
 
-    <button onclick="addSubject()">
+    <button class="admin-btn" onclick="addSubject()">
         Add Subject
     </button>
 <!-- SUBJECTS -->
 
-<h2>All Subjects</h2>
+<h2>Subjects</h2>
+
+<button class="admin-btn" onclick="loadSubjects()">
+    Show Subjects
+</button>
 
 <center><div id="subjectsList"></div></center>
-  
 
     <!-- STUDENTS -->
 
-    <h2>All Students</h2>
+<h2>Students</h2>
 
-    <center><div id="studentsList"></div></center>
+<button class="admin-btn" onclick="loadStudents()">
+    Show Registered Students
+</button>
+
+<center><div id="studentsList"></div></center>
 
     <!-- TEACHERS -->
 
-    <h2>All Teachers</h2>
+    <h2>Teachers</h2>
 
-    <center><div id="teachersList"></div></center>
+<button class="admin-btn" onclick="loadTeachers()">
+    Show Registered Teachers
+</button>
+
+<center><div id="teachersList"></div></center>
 
     <!-- RESET ATTENDANCE -->
     <h2>Reset Attendance</h2>
 
-    <button onclick="resetAttendance()">
+    <button class="admin-btn" onclick="resetAttendance()">
         Reset All Attendance
     </button>
 

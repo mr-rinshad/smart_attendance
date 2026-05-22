@@ -36,21 +36,71 @@ function register() {
 
     };
 
+    // BASIC VALIDATION
+
+    if (
+        !data.name ||
+        !data.email ||
+        !data.password
+    ) {
+
+        alert("Fill All Fields");
+
+        return;
+
+    }
+
+    // STUDENT ROLL NUMBER VALIDATION
+
+    if (
+        role === "student" &&
+        !rollNo
+    ) {
+
+        alert("Enter Roll Number");
+
+        return;
+
+    }
+
     fetch(`${API}/register`, {
 
         method: "POST",
 
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+                "application/json"
         },
 
         body: JSON.stringify(data)
 
     })
+
     .then(res => res.text())
+
     .then(data => {
 
         alert(data);
+
+        // REDIRECT ONLY IF SUCCESS
+
+        if (
+            data ===
+            "User Registered Successfully"
+        ) {
+
+            window.location =
+                "index.html";
+
+        }
+
+    })
+
+    .catch(err => {
+
+        console.log(err);
+
+        alert("Something Went Wrong");
 
     });
 
@@ -1033,11 +1083,6 @@ if (
     )
 ) {
 
-    loadStudents();
-
-    loadTeachers();
-    
-    loadSubjects();
 
     loadStats();
 
