@@ -120,13 +120,26 @@ function login() {
             // Redirect by role
             if (data.user.role === "teacher") {
 
-                window.location.href =
+                window.location =
                     "teacher.html";
 
-            } else {
+            }
 
-                window.location.href =
+            else if (
+                data.user.role === "student"
+            ) {
+
+                window.location =
                     "student.html";
+
+            }
+
+            else if (
+                data.user.role === "admin"
+            ) {
+
+                window.location =
+                    "admin.html";
 
             }
 
@@ -625,6 +638,368 @@ function loadOverallAttendance() {
     });
 
 }
+// LOAD STUDENTS
+function loadStudents() {
+
+    fetch(`${API}/students`)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        let html = `
+            <table border="1" cellpadding="10">
+
+            <tr>
+
+                <th>Roll No</th>
+
+                <th>Name</th>
+
+                <th>Email</th>
+
+                <th>Action</th>
+
+            </tr>
+        `;
+
+        data.forEach(student => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${student.roll_no}
+                    </td>
+
+                    <td>
+                        ${student.name}
+                    </td>
+
+                    <td>
+                        ${student.email}
+                    </td>
+
+                    <td>
+
+                        <button
+                            onclick="
+                                deleteUser(${student.id})
+                            "
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        html += `</table>`;
+
+        document.getElementById(
+            "studentsList"
+        ).innerHTML = html;
+
+    });
+
+}
+// LOAD TEACHERS
+function loadTeachers() {
+
+    fetch(`${API}/teachers`)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        let html = `
+            <table border="1" cellpadding="10">
+
+            <tr>
+
+                <th>Name</th>
+
+                <th>Email</th>
+
+                <th>Action</th>
+
+            </tr>
+        `;
+
+        data.forEach(teacher => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${teacher.name}
+                    </td>
+
+                    <td>
+                        ${teacher.email}
+                    </td>
+
+                    <td>
+
+                        <button
+                            onclick="
+                                deleteUser(${teacher.id})
+                            "
+                        >
+                            Delete
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        html += `</table>`;
+
+        document.getElementById(
+            "teachersList"
+        ).innerHTML = html;
+
+    });
+
+}
+// LOAD SUBJECTS
+function loadSubjects() {
+
+    fetch(`${API}/subjects`)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        let html = `
+
+            <table
+                border="1"
+                cellpadding="10"
+            >
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Subject</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+        `;
+
+        data.forEach(subject => {
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${subject.id}
+                    </td>
+
+                    <td>
+                        ${subject.subject_name}
+                    </td>
+
+                    <td>
+
+                        <button
+                            onclick="
+                                deleteSubject(
+                                    ${subject.id}
+                                )
+                            "
+                        >
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        });
+
+        html += `</table>`;
+
+        document.getElementById(
+            "subjectsList"
+        ).innerHTML = html;
+
+    });
+
+}
+// DELETE SUBJECT
+function deleteSubject(id) {
+
+    const confirmDelete =
+        confirm(
+            "Delete Subject?"
+        );
+
+    if (!confirmDelete) return;
+
+    fetch(
+        `${API}/delete-subject/${id}`,
+        {
+            method: "DELETE"
+        }
+    )
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        alert(data);
+
+        loadSubjects();
+
+        loadStats();
+
+    });
+
+}
+// DELETE USER (STUDENT OR TEACHER)
+function deleteUser(id) {
+
+    const confirmDelete =
+        confirm("Delete User?");
+
+    if (!confirmDelete) return;
+
+    fetch(`${API}/delete-user/${id}`, {
+
+        method: "DELETE"
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        alert(data);
+
+        loadStudents();
+
+        loadTeachers();
+
+        loadStats();
+
+    });
+
+}
+// LOAD SUBJECTS
+function addSubject() {
+
+    const subject =
+        document.getElementById(
+            "subjectName"
+        ).value;
+
+    fetch(`${API}/add-subject`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type":
+                "application/json"
+        },
+
+        body: JSON.stringify({
+
+            subject_name: subject
+
+        })
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        alert(data);
+
+        loadSubjects();
+
+        loadStats();
+
+    });
+
+}
+
+// RESET ATTENDANCE
+function resetAttendance() {
+
+    const confirmReset =
+        confirm(
+            "Reset ALL Attendance?"
+        );
+
+    if (!confirmReset) return;
+
+    fetch(`${API}/reset-attendance`, {
+
+        method: "DELETE"
+
+    })
+
+    .then(res => res.text())
+
+    .then(data => {
+
+        alert(data);
+
+    });
+
+}
+// LOAD SYSTEM STATS
+function loadStats() {
+
+    fetch(`${API}/system-stats`)
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        document.getElementById(
+            "totalStudents"
+        ).innerText =
+            data.students;
+
+        document.getElementById(
+            "totalTeachers"
+        ).innerText =
+            data.teachers;
+
+        document.getElementById(
+            "totalSubjects"
+        ).innerText =
+            data.subjects;
+
+        document.getElementById(
+            "totalSessions"
+        ).innerText =
+            data.sessions;
+
+    });
+
+}
 
 // AUTO LOAD STUDENT DATA
 if (
@@ -651,6 +1026,22 @@ if (
 
 }
 
+// AUTO LOAD admin DATA
+if (
+    window.location.pathname.includes(
+        "admin.html"
+    )
+) {
+
+    loadStudents();
+
+    loadTeachers();
+    
+    loadSubjects();
+
+    loadStats();
+
+}
 
 // LOGOUT
 function logout() {

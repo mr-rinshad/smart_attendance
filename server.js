@@ -638,6 +638,262 @@ app.delete("/remove-attendance/:attendance_id", (req, res) => {
 
 });
 
+// add subject api
+app.post("/add-subject", (req, res) => {
+
+    const { subject_name } = req.body;
+
+    const sql = `
+        INSERT INTO subjects
+        (subject_name)
+        VALUES (?)
+    `;
+
+    db.query(sql, [subject_name], (err) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send(
+                "Failed To Add Subject"
+            );
+
+        }
+
+        res.send(
+            "Subject Added"
+        );
+
+    });
+
+});
+
+// get all subjects api
+app.get("/subjects", (req, res) => {
+
+    const sql = `
+        SELECT *
+        FROM subjects
+    `;
+
+    db.query(sql, (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        res.json(result);
+
+    });
+
+});
+
+// delete subject api
+app.delete("/delete-subject/:id", (req, res) => {
+
+    const subjectId =
+        req.params.id;
+
+    const sql = `
+        DELETE FROM subjects
+        WHERE id = ?
+    `;
+
+    db.query(sql, [subjectId], (err) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send(
+                "Delete Failed"
+            );
+
+        }
+
+        res.send(
+            "Subject Deleted"
+        );
+
+    });
+
+});
+
+// get all students api
+app.get("/students", (req, res) => {
+
+    const sql = `
+        SELECT *
+        FROM users
+        WHERE role='student'
+    `;
+
+    db.query(sql, (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        res.json(result);
+
+    });
+
+});
+
+// get all teachers api
+app.get("/teachers", (req, res) => {
+
+    const sql = `
+        SELECT *
+        FROM users
+        WHERE role='teacher'
+    `;
+
+    db.query(sql, (err, result) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send("Error");
+
+        }
+
+        res.json(result);
+
+    });
+
+});
+
+// delete user api
+app.delete("/delete-user/:id", (req, res) => {
+
+    const userId =
+        req.params.id;
+
+    const sql = `
+        DELETE FROM users
+        WHERE id = ?
+    `;
+
+    db.query(sql, [userId], (err) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send(
+                "Delete Failed"
+            );
+
+        }
+
+        res.send(
+            "User Deleted"
+        );
+
+    });
+
+});
+
+// reset attendance api
+app.delete("/reset-attendance", (req, res) => {
+
+    const sql = `
+        DELETE FROM attendance
+    `;
+
+    db.query(sql, (err) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.send(
+                "Reset Failed"
+            );
+
+        }
+
+        res.send(
+            "Attendance Reset Successful"
+        );
+
+    });
+
+});
+
+// system stats api
+app.get("/system-stats", (req, res) => {
+
+    const stats = {};
+
+    db.query(
+        `
+        SELECT COUNT(*) AS total
+        FROM users
+        WHERE role='student'
+        `,
+        (err, students) => {
+
+            stats.students =
+                students[0].total;
+
+            db.query(
+                `
+                SELECT COUNT(*) AS total
+                FROM users
+                WHERE role='teacher'
+                `,
+                (err, teachers) => {
+
+                    stats.teachers =
+                        teachers[0].total;
+
+                    db.query(
+                        `
+                        SELECT COUNT(*) AS total
+                        FROM subjects
+                        `,
+                        (err, subjects) => {
+
+                            stats.subjects =
+                                subjects[0].total;
+
+                            db.query(
+                                `
+                                SELECT COUNT(*) AS total
+                                FROM sessions
+                                `,
+                                (err, sessions) => {
+
+                                    stats.sessions =
+                                        sessions[0].total;
+
+                                    res.json(stats);
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+});
 
 app.listen(3000, () => {
     console.log("Server running on port 3000");
