@@ -146,58 +146,106 @@ function login() {
 
     };
 
+    // BASIC VALIDATION
+
+    if (
+        !data.email ||
+        !data.password
+    ) {
+
+        alert(
+            "Fill All Fields"
+        );
+
+        return;
+
+    }
+
     fetch(`${API}/login`, {
 
         method: "POST",
 
         headers: {
-            "Content-Type": "application/json"
+
+            "Content-Type":
+                "application/json"
+
         },
 
         body: JSON.stringify(data)
 
     })
+
     .then(res => res.json())
+
     .then(data => {
 
-        if (data.message === "Login Success") {
+        // INVALID LOGIN
 
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
+        if (
+            data.message ===
+            "Invalid credentials"
+        ) {
+
+            alert(
+                "Invalid Email Or Password"
             );
 
-            // Redirect by role
-            if (data.user.role === "teacher") {
-
-                window.location =
-                    "teacher.html";
-
-            }
-
-            else if (
-                data.user.role === "student"
-            ) {
-
-                window.location =
-                    "student.html";
-
-            }
-
-            else if (
-                data.user.role === "admin"
-            ) {
-
-                window.location =
-                    "admin.html";
-
-            }
-
-        } else {
-
-            alert("Invalid Login");
+            return;
 
         }
+
+        // STORE USER DATA
+
+        localStorage.setItem(
+
+            "user",
+
+            JSON.stringify(data.user)
+
+        );
+
+        // REDIRECT BASED ON ROLE
+
+        if (
+            data.user.role ===
+            "teacher"
+        ) {
+
+            window.location =
+                "teacher.html";
+
+        }
+
+        else if (
+            data.user.role ===
+            "student"
+        ) {
+
+            window.location =
+                "student.html";
+
+        }
+
+        else if (
+            data.user.role ===
+            "admin"
+        ) {
+
+            window.location =
+                "admin.html";
+
+        }
+
+    })
+
+    .catch(err => {
+
+        console.log(err);
+
+        alert(
+            "Something Went Wrong"
+        );
 
     });
 
@@ -1051,6 +1099,30 @@ function loadStats() {
 
 }
 
+// SHOW USERNAME
+function showUsername() {
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("user")
+        );
+
+    if (
+        user &&
+        document.getElementById(
+            "welcomeText"
+        )
+    ) {
+
+        document.getElementById(
+            "welcomeText"
+        ).innerText =
+            `Welcome, ${user.name}`;
+
+    }
+
+}
+
 // AUTO LOAD STUDENT DATA
 if (
     window.location.pathname.includes(
@@ -1061,6 +1133,8 @@ if (
     loadAttendancePercentage();
 
     loadOverallAttendance();
+
+    showUsername();
 
 }
 
@@ -1085,8 +1159,20 @@ if (
 
 
     loadStats();
+    showUsername();
 
 }
+
+if (
+    window.location.pathname.includes(
+        "teacher.html"
+    )
+) {
+
+    showUsername();
+
+}
+
 
 // LOGOUT
 function logout() {
