@@ -450,10 +450,35 @@ function loadSessionAttendance(sessionId) {
             "sessionAttendance"
         ).innerHTML = html;
 
+        // LOAD LIVE COUNT
+
+        loadAttendanceCount(sessionId);
+
     });
 
 }
 
+function loadAttendanceCount(
+    sessionId
+) {
+
+    fetch(
+        `${API}/attendance-count/${sessionId}`
+    )
+
+    .then(res => res.json())
+
+    .then(data => {
+
+        document.getElementById(
+            "liveCount"
+        ).innerText =
+
+            `Total Present: ${data.total}`;
+
+    });
+
+}
 
 // REMOVE ATTENDANCE
 function removeAttendance(
@@ -701,41 +726,75 @@ function loadAttendancePercentage() {
 
 
 // LOAD OVERALL ATTENDANCE
+
 function loadOverallAttendance() {
 
     const user =
-        JSON.parse(localStorage.getItem("user"));
+        JSON.parse(
+            localStorage.getItem("user")
+        );
 
-    fetch(`${API}/overall-attendance/${user.id}`)
+    fetch(
+        `${API}/overall-attendance/${user.id}`
+    )
 
     .then(res => res.json())
 
     .then(data => {
 
         const percentage =
-            parseFloat(data.percentage) || 0;
+            parseFloat(
+                data.percentage
+            ) || 0;
 
-        // Full circle size
+        // FULL CIRCLE SIZE
+
         const circumference = 440;
 
-        // Calculate filled part
-        const offset =
-            circumference -
-            (percentage / 100) * circumference;
+        // CALCULATE PROGRESS
 
-        // Update progress circle
+        const offset =
+
+            circumference -
+
+            (percentage / 100) *
+
+            circumference;
+
+        // UPDATE CIRCLE
+
         document.getElementById(
             "progressCircle"
         ).style.strokeDashoffset = offset;
 
-        // Update percentage text
+        // UPDATE PERCENTAGE TEXT
+
         document.getElementById(
             "circleText"
-        ).innerText = `${percentage}%`;
+        ).innerText =
+
+            `${percentage}%`;
+
+        // UPDATE PRESENT COUNT
+
+        document.getElementById(
+            "presentCount"
+        ).innerText =
+
+            data.total_present || 0;
+
+        // UPDATE TOTAL CLASSES
+
+        document.getElementById(
+            "totalClasses"
+        ).innerText =
+
+            data.total_classes || 0;
 
     });
 
 }
+
 // LOAD STUDENTS
 function loadStudents() {
 

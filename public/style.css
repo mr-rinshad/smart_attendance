@@ -348,3 +348,40 @@ button:hover {
     opacity: 0.9;
 
 }
+.attendance-summary {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 40px;
+
+    margin-top: 15px;
+
+}
+
+.attendance-side {
+
+    text-align: center;
+
+}
+
+.attendance-side h2 {
+
+    font-size: 34px;
+
+    color: #0e0e0e;
+
+    margin-bottom: 5px;
+
+}
+
+.attendance-side p {
+
+    font-size: 18px;
+
+    color: rgb(11, 11, 11);
+
+}

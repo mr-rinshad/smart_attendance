@@ -606,8 +606,53 @@ app.get("/session-attendance/:session_id", (req, res) => {
 
 });
 
+// attendance count api
+app.get(
+    "/attendance-count/:session_id",
 
-//romove attendance api
+    (req, res) => {
+
+        const sessionId =
+            req.params.session_id;
+
+        const sql = `
+
+            SELECT COUNT(*) AS total
+
+            FROM attendance
+
+            WHERE session_id = ?
+
+        `;
+
+        db.query(
+
+            sql,
+
+            [sessionId],
+
+            (err, result) => {
+
+                if (err) {
+
+                    console.log(err);
+
+                    return res.send(
+                        "Error"
+                    );
+
+                }
+
+                res.json(result[0]);
+
+            }
+
+        );
+
+    }
+);
+
+//remove attendance api
 app.delete("/remove-attendance/:attendance_id", (req, res) => {
 
     const attendanceId =
