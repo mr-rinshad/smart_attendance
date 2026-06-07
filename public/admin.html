@@ -297,8 +297,8 @@
                     <i class="fa-solid fa-book purple"></i>
                     Subjects
                 </div>
-                <button class="btn btn-outline" onclick="loadSubjects()">
-                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                <button class="btn btn-outline" id="toggleSubjectsBtn" onclick="toggleSection('subjects')">
+                    <i class="fa-solid fa-eye"></i> Show
                 </button>
             </div>
             <!-- Add Subject -->
@@ -308,11 +308,11 @@
                     <i class="fa-solid fa-plus"></i> Add Subject
                 </button>
             </div>
-            <div class="table-wrap">
+            <div class="table-wrap" id="subjectsWrap" style="display:none;">
                 <div id="subjectsList">
                     <div class="empty-state">
                         <i class="fa-solid fa-book"></i>
-                        Click Refresh to load subjects
+                        No subjects added yet.
                     </div>
                 </div>
             </div>
@@ -325,15 +325,15 @@
                     <i class="fa-solid fa-user-graduate blue"></i>
                     Students
                 </div>
-                <button class="btn btn-outline" onclick="loadStudents()">
-                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                <button class="btn btn-outline" id="toggleStudentsBtn" onclick="toggleSection('students')">
+                    <i class="fa-solid fa-eye"></i> Show
                 </button>
             </div>
-            <div class="table-wrap">
+            <div class="table-wrap" id="studentsWrap" style="display:none;">
                 <div id="studentsList">
                     <div class="empty-state">
                         <i class="fa-solid fa-user-graduate"></i>
-                        Click Refresh to load students
+                        No students registered yet.
                     </div>
                 </div>
             </div>
@@ -346,15 +346,15 @@
                     <i class="fa-solid fa-chalkboard-user green"></i>
                     Teachers
                 </div>
-                <button class="btn btn-outline" onclick="loadTeachers()">
-                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                <button class="btn btn-outline" id="toggleTeachersBtn" onclick="toggleSection('teachers')">
+                    <i class="fa-solid fa-eye"></i> Show
                 </button>
             </div>
-            <div class="table-wrap">
+            <div class="table-wrap" id="teachersWrap" style="display:none;">
                 <div id="teachersList">
                     <div class="empty-state">
                         <i class="fa-solid fa-chalkboard-user"></i>
-                        Click Refresh to load teachers
+                        No teachers registered yet.
                     </div>
                 </div>
             </div>

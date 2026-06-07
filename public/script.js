@@ -1167,3 +1167,44 @@ function selectRole(role) {
     document.getElementById('tabTeacher').classList.toggle('active', role === 'teacher');
 
 }
+
+
+// TOGGLE SHOW/HIDE SECTIONS (admin page)
+function toggleSection(section) {
+
+    const config = {
+        subjects: {
+            wrap:    'subjectsWrap',
+            btn:     'toggleSubjectsBtn',
+            loader:  loadSubjects
+        },
+        students: {
+            wrap:    'studentsWrap',
+            btn:     'toggleStudentsBtn',
+            loader:  loadStudents
+        },
+        teachers: {
+            wrap:    'teachersWrap',
+            btn:     'toggleTeachersBtn',
+            loader:  loadTeachers
+        }
+    };
+
+    const { wrap, btn, loader } = config[section];
+
+    const wrapEl = document.getElementById(wrap);
+    const btnEl  = document.getElementById(btn);
+    const isHidden = wrapEl.style.display === 'none';
+
+    if (isHidden) {
+        // Show — load data first, then reveal
+        loader();
+        wrapEl.style.display = 'block';
+        btnEl.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide';
+    } else {
+        // Hide
+        wrapEl.style.display = 'none';
+        btnEl.innerHTML = '<i class="fa-solid fa-eye"></i> Show';
+    }
+
+}
