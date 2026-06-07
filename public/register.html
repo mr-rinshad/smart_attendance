@@ -1,58 +1,360 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
-    <link rel="stylesheet" href="style.css">
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — Smart Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            background: #fff;
+            border-bottom: 1px solid #e5eaf5;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1.5px solid #dce6ff;
+            border-radius: 10px;
+            background: #fff;
+            color: #2563eb;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #f0f4ff; }
+        .navbar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar-title .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #2563eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 16px;
+        }
+        .nav-spacer { width: 120px; }
+
+        /* CENTER */
+        .center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 24px;
+        }
+
+        /* CARD */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px 32px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 8px 40px rgba(37,99,235,0.10);
+        }
+
+        .card-icon {
+            width: 52px;
+            height: 52px;
+            background: #eff6ff;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #2563eb;
+            margin: 0 auto 10px auto;
+        }
+        .card h2 {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        .card .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        /* ROLE TOGGLE TABS */
+        .role-tabs {
+            display: flex;
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 14px;
+            gap: 4px;
+        }
+        .role-tab {
+            flex: 1;
+            padding: 7px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: transparent;
+            color: #6b7280;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            width: auto;
+            margin: 0;
+        }
+        .role-tab.active {
+            background: #fff;
+            color: #2563eb;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+        }
+
+        /* INPUT GROUP */
+        .input-group { margin-bottom: 10px; }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 7px;
+        }
+        .input-wrap { position: relative; }
+        .input-wrap i.field-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 15px;
+        }
+        .input-wrap input,
+        .input-wrap select {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            border: 1.5px solid #e5eaf5;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #111827;
+            background: #fafbff;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+        }
+        .input-wrap input:focus,
+        .input-wrap select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+            background: #fff;
+        }
+        .input-wrap input::placeholder { color: #c4c9d4; }
+
+        .eye-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 15px;
+            padding: 0;
+            width: auto;
+            margin: 0;
+        }
+
+        /* Roll number field — hidden for teacher */
+        #rollNoField { transition: all 0.2s; }
+
+        /* PRIMARY BUTTON */
+        .primary-btn {
+            width: 100%;
+            padding: 9px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .primary-btn:hover { background: #1d4ed8; transform: scale(1.01); }
+
+        /* DIVIDER */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+            color: #d1d5db;
+            font-size: 13px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5eaf5;
+        }
+
+        .footer-link {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .footer-link a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .footer-link a:hover { text-decoration: underline; }
+
+        .college-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 9px;
+            background: #f0f4ff;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .college-badge i { color: #2563eb; }
+    </style>
 </head>
 <body>
-<button
-    class="home-btn"
-    onclick="
-        window.location.href='index.html'
-    "
->
 
-    <i class="fa-solid fa-house"></i>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <button class="nav-btn" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-house"></i> Home
+        </button>
+        <div class="navbar-title">
+            <div class="logo-icon"><i class="fa-solid fa-qrcode"></i></div>
+            Smart Attendance
+        </div>
+        <div class="nav-spacer"></div>
+    </div>
 
-    Home
+    <!-- CENTER CARD -->
+    <div class="center">
+        <div class="card">
 
-</button>
-<h2>Register</h2>
+            <div class="card-icon">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2>Create Account</h2>
+            <p class="subtitle">Register to join the attendance system</p>
 
-<input type="text" id="name" placeholder="Name">
-<br>
+            <!-- Role Tabs -->
+            <div class="role-tabs">
+                <button class="role-tab active" id="tabStudent" onclick="selectRole('student')">
+                    <i class="fa-solid fa-user-graduate"></i> Student
+                </button>
+                <button class="role-tab" id="tabTeacher" onclick="selectRole('teacher')">
+                    <i class="fa-solid fa-chalkboard-user"></i> Teacher
+                </button>
+            </div>
 
-<input type="email" id="email" placeholder="Email">
-<br>
+            <!-- Hidden real select (used by script.js) -->
+            <select id="role" style="display:none;" onchange="toggleRollNo()">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+            </select>
 
-<div id="rollNoField">
+            <!-- Full Name -->
+            <div class="input-group">
+                <label>Full Name</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-user field-icon"></i>
+                    <input type="text" id="name" placeholder="Enter your full name">
+                </div>
+            </div>
 
-    <input
-        type="text"
-        id="rollno"
-        placeholder="Roll Number"
-    >
+            <!-- Email -->
+            <div class="input-group">
+                <label>Email Address</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-envelope field-icon"></i>
+                    <input type="email" id="email" placeholder="you@example.com">
+                </div>
+            </div>
 
-    <br>
+            <!-- Roll Number (students only) -->
+            <div class="input-group" id="rollNoField">
+                <label>Roll Number</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-id-card field-icon"></i>
+                    <input type="text" id="rollno" placeholder="e.g. 2024001">
+                </div>
+            </div>
 
-</div>
+            <!-- Password -->
+            <div class="input-group">
+                <label>Password</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-lock field-icon"></i>
+                    <input type="password" id="password" placeholder="Create a password">
+                    <button class="eye-btn" onclick="togglePassword('password', this)" tabindex="-1">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                </div>
+            </div>
 
-<input type="password" id="password" placeholder="Password">
-<br>
+            <!-- Register Button -->
+            <button class="primary-btn" onclick="register()">
+                Create Account
+            </button>
 
-<select id="role" onchange="toggleRollNo()">
-    <option value="student">Student</option>
-    <option value="teacher">Teacher</option>
-</select>
-<br>
+            <div class="divider">or</div>
 
-<button onclick="register()">Register</button>
+            <p class="footer-link">
+                Already have an account? <a href="login.html">Sign in here</a>
+            </p>
 
-<script src="script.js"></script>
+            <div class="college-badge">
+                <i class="fa-solid fa-graduation-cap"></i>
+                MEA Engineering College — QR Attendance System
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 
 </body>
 </html>

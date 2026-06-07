@@ -1,146 +1,384 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+        }
 
-    <title>
-        Admin Dashboard
-    </title>
+        /* ── NAVBAR ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            background: #fff;
+            border-bottom: 1px solid #e5eaf5;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1.5px solid #dce6ff;
+            border-radius: 10px;
+            background: #fff;
+            color: #2563eb;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #f0f4ff; }
+        .nav-btn.danger {
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+        .nav-btn.danger:hover { background: #fff5f5; }
+        .navbar h1 { font-size: 24px; font-weight: 700; color: #111827; }
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-/>
+        /* ── PAGE ── */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
 
+        /* ── STAT CARDS ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+        }
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .stat-icon.blue   { background: #dbeafe; color: #2563eb; }
+        .stat-icon.green  { background: #dcfce7; color: #16a34a; }
+        .stat-icon.purple { background: #ede9fe; color: #7c3aed; }
+        .stat-icon.orange { background: #ffedd5; color: #ea580c; }
+        .stat-info p { font-size: 13px; color: #9ca3af; margin-bottom: 4px; }
+        .stat-info h2 { font-size: 28px; font-weight: 800; color: #111827; }
+
+        /* ── SECTION CARD ── */
+        .section-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+        .section-title i.blue   { background: #dbeafe; color: #2563eb; }
+        .section-title i.green  { background: #dcfce7; color: #16a34a; }
+        .section-title i.purple { background: #ede9fe; color: #7c3aed; }
+        .section-title i.red    { background: #fee2e2; color: #ef4444; }
+
+        /* ── ADD SUBJECT ROW ── */
+        .add-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .add-row input {
+            flex: 1;
+            padding: 11px 16px;
+            border: 1.5px solid #e5eaf5;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #111827;
+            background: #fafbff;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .add-row input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+        }
+        .add-row input::placeholder { color: #c4c9d4; }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn-primary { background: #2563eb; color: #fff; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-outline {
+            background: #fff;
+            color: #2563eb;
+            border: 1.5px solid #dce6ff;
+        }
+        .btn-outline:hover { background: #f0f4ff; }
+        .btn-danger { background: #fff; color: #ef4444; border: 1.5px solid #fecaca; }
+        .btn-danger:hover { background: #fff5f5; }
+
+        /* ── TABLE ── */
+        .table-wrap { overflow-x: auto; }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table thead tr { background: #f0f4ff; }
+        .admin-table th {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            text-align: left;
+        }
+        .admin-table th:last-child,
+        .admin-table td:last-child { text-align: right; }
+        .admin-table td {
+            padding: 13px 16px;
+            font-size: 14px;
+            color: #374151;
+            border-bottom: 1px solid #f0f4ff;
+        }
+        .admin-table tbody tr:last-child td { border-bottom: none; }
+        .admin-table tbody tr:hover { background: #fafbff; }
+
+        .del-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ef4444;
+            font-size: 16px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .del-btn:hover { background: #fee2e2; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        .empty-state i { font-size: 32px; margin-bottom: 10px; display: block; color: #dce6ff; }
+
+        /* Reset danger zone */
+        .danger-zone {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #fff5f5;
+            border: 1.5px solid #fecaca;
+            border-radius: 12px;
+        }
+        .danger-zone-text p { font-size: 14px; font-weight: 600; color: #ef4444; }
+        .danger-zone-text span { font-size: 13px; color: #9ca3af; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .navbar { padding: 12px 16px; }
+            .page { padding: 16px; }
+        }
+    </style>
 </head>
-
 <body>
-    <button
-    class="home-btn"
-    onclick="
-        window.location.href='index.html'
-    "
->
 
-    <i class="fa-solid fa-house"></i>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <button class="nav-btn" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-house"></i> Home
+        </button>
+        <h1>Admin Dashboard</h1>
+        <button class="nav-btn" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+    </div>
 
-    Home
+    <div class="page">
 
-</button>
-
-    <h1>
-        Admin Dashboard
-    </h1>
-
-    <!-- STATS -->
-
-    <center><div class="stats-container">
-
-        <div class="stat-card">
-
-            <h2 id="totalStudents">
-                0
-            </h2>
-
-            <p>Total Students</p>
-
+        <!-- ── STAT CARDS ── -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fa-solid fa-user-graduate"></i></div>
+                <div class="stat-info">
+                    <p>Total Students</p>
+                    <h2 id="totalStudents">0</h2>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <div class="stat-info">
+                    <p>Total Teachers</p>
+                    <h2 id="totalTeachers">0</h2>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fa-solid fa-book"></i></div>
+                <div class="stat-info">
+                    <p>Total Subjects</p>
+                    <h2 id="totalSubjects">0</h2>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
+                <div class="stat-info">
+                    <p>Total Sessions</p>
+                    <h2 id="totalSessions">0</h2>
+                </div>
+            </div>
         </div>
 
-        <div class="stat-card">
-
-            <h2 id="totalTeachers">
-                0
-            </h2>
-
-            <p>Total Teachers</p>
-
+        <!-- ── SUBJECTS ── -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-book purple"></i>
+                    Subjects
+                </div>
+                <button class="btn btn-outline" onclick="loadSubjects()">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                </button>
+            </div>
+            <!-- Add Subject -->
+            <div class="add-row" style="margin-bottom:18px;">
+                <input type="text" id="subjectName" placeholder="Enter new subject name...">
+                <button class="btn btn-primary" onclick="addSubject()">
+                    <i class="fa-solid fa-plus"></i> Add Subject
+                </button>
+            </div>
+            <div class="table-wrap">
+                <div id="subjectsList">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-book"></i>
+                        Click Refresh to load subjects
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="stat-card">
-
-            <h2 id="totalSubjects">
-                0
-            </h2>
-
-            <p>Total Subjects</p>
-
+        <!-- ── STUDENTS ── -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-user-graduate blue"></i>
+                    Students
+                </div>
+                <button class="btn btn-outline" onclick="loadStudents()">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                </button>
+            </div>
+            <div class="table-wrap">
+                <div id="studentsList">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        Click Refresh to load students
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="stat-card">
-
-            <h2 id="totalSessions">
-                0
-            </h2>
-
-            <p>Total Sessions</p>
-
+        <!-- ── TEACHERS ── -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-chalkboard-user green"></i>
+                    Teachers
+                </div>
+                <button class="btn btn-outline" onclick="loadTeachers()">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh
+                </button>
+            </div>
+            <div class="table-wrap">
+                <div id="teachersList">
+                    <div class="empty-state">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        Click Refresh to load teachers
+                    </div>
+                </div>
+            </div>
         </div>
 
-    </div></center>
+        <!-- ── DANGER ZONE ── -->
+        <div class="section-card">
+            <div class="section-title" style="margin-bottom:16px;">
+                <i class="fa-solid fa-triangle-exclamation red"></i>
+                Danger Zone
+            </div>
+            <div class="danger-zone">
+                <div class="danger-zone-text">
+                    <p>Reset All Attendance</p>
+                    <span>This will permanently delete all attendance records.</span>
+                </div>
+                <button class="btn btn-danger" onclick="resetAttendance()">
+                    <i class="fa-solid fa-trash"></i> Reset Attendance
+                </button>
+            </div>
+        </div>
 
-    <!-- ADD SUBJECT -->
-
-    <h2>Add Subject</h2>
-
-    <input
-        type="text"
-        id="subjectName"
-        placeholder="Enter Subject Name"
-    >
-
-    <button class="admin-btn" onclick="addSubject()">
-        Add Subject
-    </button>
-<!-- SUBJECTS -->
-
-<h2>Subjects</h2>
-
-<button class="admin-btn" onclick="loadSubjects()">
-    Show Subjects
-</button>
-
-<center><div id="subjectsList"></div></center>
-
-    <!-- STUDENTS -->
-
-<h2>Students</h2>
-
-<button class="admin-btn" onclick="loadStudents()">
-    Show Registered Students
-</button>
-
-<center><div id="studentsList"></div></center>
-
-    <!-- TEACHERS -->
-
-    <h2>Teachers</h2>
-
-<button class="admin-btn" onclick="loadTeachers()">
-    Show Registered Teachers
-</button>
-
-<center><div id="teachersList"></div></center>
-
-    <!-- RESET ATTENDANCE -->
-    <h2>Reset Attendance</h2>
-
-    <button class="admin-btn" onclick="resetAttendance()">
-        Reset All Attendance
-    </button>
+    </div>
 
     <script src="script.js"></script>
-
 </body>
-
 </html>

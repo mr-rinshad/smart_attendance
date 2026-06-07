@@ -315,6 +315,11 @@ function createSession() {
 // COUNTDOWN TIMER
 function startCountdown(seconds, sessionId) {
 
+    // Switch to active QR state
+    document.getElementById("stateEmpty").style.display   = "none";
+    document.getElementById("stateActive").style.display  = "flex";
+    document.getElementById("stateExpired").style.display = "none";
+
     const timerText =
         document.getElementById(
             "timerText"
@@ -352,11 +357,11 @@ function startCountdown(seconds, sessionId) {
 
             clearInterval(refreshInterval);
 
-            timerText.innerText =
-                "QR Expired";
+            // Switch to expired QR state
+            document.getElementById("stateActive").style.display  = "none";
+            document.getElementById("stateExpired").style.display = "flex";
 
-            downloadBtn.style.display =
-                "inline-block";
+            downloadBtn.style.display = "flex";
 
             downloadBtn.onclick = () => {
 
@@ -384,74 +389,44 @@ function loadSessionAttendance(sessionId) {
 
     .then(data => {
 
-        let html = `
-
-            <table
-                border="1"
-                cellpadding="10"
-                style="
-                    margin:auto;
-                    border-collapse:collapse;
-                "
-            >
-
-                <tr>
-
-                    <th>Roll No</th>
-
-                    <th>Name</th>
-
-                    <th>Action</th>
-
-                </tr>
-
-        `;
+        let rows = "";
 
         data.forEach(student => {
 
-            html += `
-
+            rows += `
                 <tr>
-
+                    <td>${student.roll_no}</td>
+                    <td>${student.name}</td>
                     <td>
-                        ${student.roll_no}
-                    </td>
-
-                    <td>
-                        ${student.name}
-                    </td>
-
-                    <td>
-
-                        <button
-                            onclick="
-                                removeAttendance(
-                                    ${student.attendance_id},
-                                    ${sessionId}
-                                )
-                            "
-                        >
-
-                            Remove
-
+                        <button class="remove-btn"
+                            onclick="removeAttendance(${student.attendance_id}, ${sessionId})"
+                            title="Remove">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
-
                     </td>
-
                 </tr>
-
             `;
 
         });
 
-        html += `</table>`;
+        const html = `
+            <table class="att-table">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        `;
 
         document.getElementById(
             "sessionAttendance"
         ).innerHTML = html;
 
         // LOAD LIVE COUNT
-
         loadAttendanceCount(sessionId);
 
     });
@@ -472,9 +447,8 @@ function loadAttendanceCount(
 
         document.getElementById(
             "liveCount"
-        ).innerText =
-
-            `Total Present: ${data.total}`;
+        ).innerHTML =
+            `<i class="fa-solid fa-users"></i> Total Present: ${data.total}`;
 
     });
 
@@ -677,41 +651,47 @@ function loadAttendancePercentage() {
 
     .then(data => {
 
+        const colors = [
+            { text: 'c-purple', bar: 'bg-purple' },
+            { text: 'c-blue',   bar: 'bg-blue'   },
+            { text: 'c-green',  bar: 'bg-green'  },
+            { text: 'c-orange', bar: 'bg-orange' },
+        ];
+
         let html = "";
 
-        data.forEach(item => {
+        data.forEach((item, i) => {
+
+            const c = colors[i % colors.length];
+            const pct = parseFloat(item.percentage) || 0;
 
             html += `
-
-                <div
-                    style="
-                        border: 1px solid #ccc;
-                        padding: 15px;
-                        margin: 10px;
-                        border-radius: 8px;
-                        background: #f9f9f9;
-                    "
-                >
-
-                    <h4>
-                        ${item.subject_name}
-                    </h4>
-
-                    Present:
-                    ${item.present_count}
-
-                    <br><br>
-
-                    Total Classes:
-                    ${item.total_classes}
-
-                    <br><br>
-
-                    Percentage:
-                    ${item.percentage || 0}%
-
+                <div class="subject-card">
+                    <div class="subject-card-top">
+                        <span class="subject-name">${item.subject_name}</span>
+                        <span class="subject-pct ${c.text}">${pct.toFixed(2)}%</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill ${c.bar}"
+                             style="width: ${pct}%"></div>
+                    </div>
+                    <div class="subject-stats">
+                        <div class="sub-stat">
+                            <p class="sub-stat-label">Present</p>
+                            <p class="sub-stat-value ${c.text}">${item.present_count}</p>
+                        </div>
+                        <div class="sub-divider"></div>
+                        <div class="sub-stat">
+                            <p class="sub-stat-label">Total Classes</p>
+                            <p class="sub-stat-value ${c.text}">${item.total_classes}</p>
+                        </div>
+                        <div class="sub-divider"></div>
+                        <div class="sub-stat">
+                            <p class="sub-stat-label">Percentage</p>
+                            <p class="sub-stat-value ${c.text}">${pct.toFixed(2)}%</p>
+                        </div>
+                    </div>
                 </div>
-
             `;
 
         });
@@ -770,7 +750,7 @@ function loadOverallAttendance() {
         // UPDATE PERCENTAGE TEXT
 
         document.getElementById(
-            "circleText"
+            "pctText"
         ).innerText =
 
             `${percentage}%`;
@@ -804,63 +784,34 @@ function loadStudents() {
 
     .then(data => {
 
-        let html = `
-            <table border="1" cellpadding="10">
+        if (!data.length) {
+            document.getElementById("studentsList").innerHTML =
+                `<div class="empty-state"><i class="fa-solid fa-user-graduate"></i>No students registered yet.</div>`;
+            return;
+        }
 
-            <tr>
-
-                <th>Roll No</th>
-
-                <th>Name</th>
-
-                <th>Email</th>
-
-                <th>Action</th>
-
-            </tr>
-        `;
-
+        let rows = "";
         data.forEach(student => {
-
-            html += `
-
+            rows += `
                 <tr>
-
+                    <td>${student.roll_no}</td>
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
                     <td>
-                        ${student.roll_no}
-                    </td>
-
-                    <td>
-                        ${student.name}
-                    </td>
-
-                    <td>
-                        ${student.email}
-                    </td>
-
-                    <td>
-
-                        <button
-                            onclick="
-                                deleteUser(${student.id})
-                            "
-                        >
-                            Delete
+                        <button class="del-btn" onclick="deleteUser(${student.id})" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
-
                     </td>
-
-                </tr>
-
-            `;
-
+                </tr>`;
         });
 
-        html += `</table>`;
-
-        document.getElementById(
-            "studentsList"
-        ).innerHTML = html;
+        document.getElementById("studentsList").innerHTML = `
+            <table class="admin-table">
+                <thead><tr>
+                    <th>Roll No</th><th>Name</th><th>Email</th><th>Action</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
 
     });
 
@@ -874,57 +825,33 @@ function loadTeachers() {
 
     .then(data => {
 
-        let html = `
-            <table border="1" cellpadding="10">
+        if (!data.length) {
+            document.getElementById("teachersList").innerHTML =
+                `<div class="empty-state"><i class="fa-solid fa-chalkboard-user"></i>No teachers registered yet.</div>`;
+            return;
+        }
 
-            <tr>
-
-                <th>Name</th>
-
-                <th>Email</th>
-
-                <th>Action</th>
-
-            </tr>
-        `;
-
+        let rows = "";
         data.forEach(teacher => {
-
-            html += `
-
+            rows += `
                 <tr>
-
+                    <td>${teacher.name}</td>
+                    <td>${teacher.email}</td>
                     <td>
-                        ${teacher.name}
-                    </td>
-
-                    <td>
-                        ${teacher.email}
-                    </td>
-
-                    <td>
-
-                        <button
-                            onclick="
-                                deleteUser(${teacher.id})
-                            "
-                        >
-                            Delete
+                        <button class="del-btn" onclick="deleteUser(${teacher.id})" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
-
                     </td>
-
-                </tr>
-
-            `;
-
+                </tr>`;
         });
 
-        html += `</table>`;
-
-        document.getElementById(
-            "teachersList"
-        ).innerHTML = html;
+        document.getElementById("teachersList").innerHTML = `
+            <table class="admin-table">
+                <thead><tr>
+                    <th>Name</th><th>Email</th><th>Action</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
 
     });
 
@@ -938,66 +865,33 @@ function loadSubjects() {
 
     .then(data => {
 
-        let html = `
+        if (!data.length) {
+            document.getElementById("subjectsList").innerHTML =
+                `<div class="empty-state"><i class="fa-solid fa-book"></i>No subjects added yet.</div>`;
+            return;
+        }
 
-            <table
-                border="1"
-                cellpadding="10"
-            >
-
-                <tr>
-
-                    <th>ID</th>
-
-                    <th>Subject</th>
-
-                    <th>Action</th>
-
-                </tr>
-
-        `;
-
+        let rows = "";
         data.forEach(subject => {
-
-            html += `
-
+            rows += `
                 <tr>
-
+                    <td>${subject.id}</td>
+                    <td>${subject.subject_name}</td>
                     <td>
-                        ${subject.id}
-                    </td>
-
-                    <td>
-                        ${subject.subject_name}
-                    </td>
-
-                    <td>
-
-                        <button
-                            onclick="
-                                deleteSubject(
-                                    ${subject.id}
-                                )
-                            "
-                        >
-
-                            Delete
-
+                        <button class="del-btn" onclick="deleteSubject(${subject.id})" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
                         </button>
-
                     </td>
-
-                </tr>
-
-            `;
-
+                </tr>`;
         });
 
-        html += `</table>`;
-
-        document.getElementById(
-            "subjectsList"
-        ).innerHTML = html;
+        document.getElementById("subjectsList").innerHTML = `
+            <table class="admin-table">
+                <thead><tr>
+                    <th>ID</th><th>Subject Name</th><th>Action</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
 
     });
 
@@ -1176,7 +1070,7 @@ function showUsername() {
         document.getElementById(
             "welcomeText"
         ).innerText =
-            `Welcome, ${user.name}`;
+            `${user.name}`;
 
     }
 
@@ -1240,5 +1134,36 @@ function logout() {
 
     window.location.href =
         "login.html";
+
+}
+
+// TOGGLE PASSWORD VISIBILITY
+function togglePassword(fieldId, btn) {
+
+    const input = document.getElementById(fieldId);
+    const icon = btn.querySelector('i');
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-regular fa-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'fa-regular fa-eye';
+    }
+
+}
+
+
+// SELECT ROLE (register page tab UI)
+function selectRole(role) {
+
+    // Update hidden select (used by register())
+    document.getElementById('role').value = role;
+
+    toggleRollNo();
+
+    // Update tab active styles
+    document.getElementById('tabStudent').classList.toggle('active', role === 'student');
+    document.getElementById('tabTeacher').classList.toggle('active', role === 'teacher');
 
 }

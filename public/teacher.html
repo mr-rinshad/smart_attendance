@@ -1,86 +1,396 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4ff;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 32px;
+            background: #fff;
+            border-bottom: 1px solid #e5eaf5;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 1.5px solid #dce6ff;
+            border-radius: 10px;
+            background: #fff;
+            color: #2563eb;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #f0f4ff; }
+        .navbar h1 { font-size: 26px; font-weight: 700; color: #111827; }
+
+        /* PAGE */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 24px;
+        }
+        .welcome {
+            text-align: center;
+            font-size: 17px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+        .welcome span { color: #2563eb; font-weight: 700; }
+
+        /* MAIN CARD (two columns) */
+        .main-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px;
+            display: flex;
+            gap: 0;
+            margin-bottom: 28px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+            min-height: 320px;
+        }
+
+        /* LEFT PANEL */
+        .left-panel {
+            flex: 1;
+            padding-right: 32px;
+            border-right: 1px solid #e5eaf5;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .field-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .styled-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #dce6ff;
+            border-radius: 10px;
+            font-size: 15px;
+            color: #111827;
+            background: #fff;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+        .styled-select:focus { outline: none; border-color: #2563eb; }
+
+        .generate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            margin-top: auto;
+        }
+        .generate-btn:hover { background: #1d4ed8; transform: scale(1.01); }
+
+        /* RIGHT PANEL */
+        .right-panel {
+            flex: 1;
+            padding-left: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* STATE 1: No QR yet */
+        .qr-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: #9ca3af;
+        }
+        .qr-placeholder i { font-size: 56px; color: #dce6ff; }
+        .qr-placeholder p { font-size: 15px; }
+
+        /* STATE 2: Active QR */
+        .qr-active { display: none; flex-direction: column; align-items: center; gap: 12px; }
+        .qr-active-label { font-size: 15px; font-weight: 600; color: #111827; }
+        .qr-box {
+            border: 1.5px solid #e5eaf5;
+            border-radius: 12px;
+            padding: 10px;
+            background: #fff;
+        }
+        #qrImage { width: 200px; height: 200px; display: block; }
+        .timer-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 12px 20px;
+            width: 100%;
+            justify-content: center;
+        }
+        .timer-bar i { color: #2563eb; font-size: 18px; }
+        #timerText { font-size: 15px; font-weight: 700; color: #111827; }
+
+        /* STATE 3: Expired QR */
+        .qr-expired { display: none; flex-direction: column; align-items: center; gap: 14px; }
+        .expired-icon-wrap {
+            position: relative;
+            width: 90px;
+            height: 90px;
+        }
+        .expired-icon-wrap .qr-bg {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #fee2e2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .expired-icon-wrap .qr-bg i { font-size: 38px; color: #ef4444; }
+        .expired-x {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 28px;
+            height: 28px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .qr-expired h3 { font-size: 20px; font-weight: 700; color: #111827; }
+        .qr-expired p  { font-size: 14px; color: #6b7280; }
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid #2563eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #2563eb;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .download-btn:hover { background: #eff6ff; }
+
+        /* SESSION ATTENDANCE TABLE */
+        .attendance-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+        }
+        .attendance-section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+        .att-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .att-table thead tr {
+            background: #f0f4ff;
+        }
+        .att-table th {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            text-align: left;
+        }
+        .att-table th:last-child, .att-table td:last-child {
+            text-align: right;
+        }
+        .att-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: #374151;
+            border-bottom: 1px solid #f0f4ff;
+        }
+        .att-table tbody tr:last-child td { border-bottom: none; }
+        .att-table tbody tr:hover { background: #fafbff; }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #ef4444;
+            font-size: 18px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            width: auto;
+            margin: 0;
+        }
+        .remove-btn:hover { background: #fee2e2; }
+
+        /* TOTAL PRESENT BADGE */
+        .total-present-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #liveCount {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .main-card { flex-direction: column; }
+            .left-panel { border-right: none; border-bottom: 1px solid #e5eaf5; padding-right: 0; padding-bottom: 24px; }
+            .right-panel { padding-left: 0; padding-top: 24px; }
+        }
+    </style>
 </head>
 <body>
-    <button
-    class="home-btn"
-    onclick="
-        window.location.href='index.html'
-    "
->
 
-    <i class="fa-solid fa-house"></i>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <button class="nav-btn" onclick="window.location.href='index.html'">
+            <i class="fa-solid fa-house"></i> Home
+        </button>
+        <h1>Teacher Dashboard</h1>
+        <button class="nav-btn" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+    </div>
 
-    Home
+    <div class="page">
 
-</button>
+        <!-- Welcome -->
+        <p class="welcome">Welcome, <span id="welcomeText"></span></p>
 
-<button onclick="logout()">Logout</button>
+        <!-- MAIN CARD -->
+        <div class="main-card">
 
-<h2>Teacher Dashboard</h2>
-<h2 id="welcomeText"></h2>
+            <!-- LEFT: Controls -->
+            <div class="left-panel">
+                <div>
+                    <p class="field-label">Select Subject</p>
+                    <select class="styled-select" id="subjectSelect">
+                        <option value="1">DBMS</option>
+                        <option value="2">Python</option>
+                        <option value="3">Java</option>
+                        <option value="4">Android</option>
+                    </select>
+                </div>
+                <div>
+                    <p class="field-label">Select Duration</p>
+                    <select class="styled-select" id="expiryTime">
+                        <option value="1">1 Minute</option>
+                        <option value="3">3 Minutes</option>
+                        <option value="5">5 Minutes</option>
+                    </select>
+                </div>
+                <button class="generate-btn" onclick="createSession()">
+                    <i class="fa-solid fa-qrcode"></i> Generate QR
+                </button>
+            </div>
 
-<select id="subjectSelect">
+            <!-- RIGHT: QR States -->
+            <div class="right-panel">
 
-    <option value="1">DBMS</option>
+                <!-- STATE 1: No QR yet (default) -->
+                <div class="qr-placeholder" id="stateEmpty">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <p>Click "Generate QR" to start a session</p>
+                </div>
 
-    <option value="2">Python</option>
+                <!-- STATE 2: Active QR -->
+                <div class="qr-active" id="stateActive">
+                    <p class="qr-active-label">Scan this QR Code</p>
+                    <div class="qr-box">
+                        <img id="qrImage" src="" alt="QR Code">
+                    </div>
+                    <div class="timer-bar">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="timerText">QR Expires In: 00:00</span>
+                    </div>
+                </div>
 
-    <option value="3">Java</option>
+                <!-- STATE 3: Expired QR -->
+                <div class="qr-expired" id="stateExpired">
+                    <div class="expired-icon-wrap">
+                        <div class="qr-bg">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </div>
+                        <div class="expired-x"><i class="fa-solid fa-xmark"></i></div>
+                    </div>
+                    <h3>QR Code Expired</h3>
+                    <p>This QR code is no longer valid.</p>
+                    <button class="download-btn" id="downloadBtn" style="display:none;">
+                        <i class="fa-solid fa-file-pdf" style="color:#ef4444;"></i>
+                        Download Attendance PDF
+                    </button>
+                </div>
 
-    <option value="4">Android</option>
+            </div>
+        </div>
 
-</select>
+        <!-- SESSION ATTENDANCE -->
+        <div class="attendance-section">
+            <h2>Session Attendance</h2>
+            <div id="sessionAttendance">
+                <!-- Table injected by JS -->
+            </div>
+            <div class="total-present-row">
+                <span id="liveCount">
+                    <i class="fa-solid fa-users"></i> Total Present: 0
+                </span>
+            </div>
+        </div>
 
-<br>
+    </div>
 
-<select id="expiryTime">
-
-    <option value="1">1 Minute</option>
-
-    <option value="3">3 Minutes</option>
-
-    <option value="5">5 Minutes</option>
-
-</select>
-
-<br><br>
-
-<button onclick="createSession()">
-    Generate QR
-</button>
-
-<br><br>
-
-<img id="qrImage" width="300">
-
-<h3 id="timerText"></h3>
-
-<button
-    id="downloadBtn"
-    style="display:none;"
->
-    Download Attendance PDF
-</button>
-
-<h3>Session Attendance</h3>
-
-<div id="sessionAttendance"></div>
-
-<h2 id="liveCount">
-
-    Total Present: 0
-
-</h2>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
