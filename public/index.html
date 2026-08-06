@@ -3,197 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Attendance System</title>
+    <title>Smart Attendance System — MEA Engineering College</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            height: 100vh;
-            font-family: 'Segoe UI', sans-serif;
-            background-image: url("images/bg.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-
-
-        /* GLASS CARD */
-        .glass-card {
-            position: relative;
-            z-index: 1;
-            width: 380px;
-            padding: 36px 36px;
-            border-radius: 22px;
-            background: rgba(255, 255, 255, 0.10);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            box-shadow:
-                0 8px 40px rgba(0, 0, 0, 0.35),
-                inset 0 1px 0 rgba(255,255,255,0.2);
-            text-align: center;
-            color: #fff;
-            animation: fadeUp 0.7s ease both;
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* COLLEGE LOGO */
-        .card-badge {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.95);
-            border: 3px solid rgba(255,255,255,0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px auto;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.25);
-            overflow: hidden;
-            padding: 4px;
-        }
-        .card-badge img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 50%;
-        }
-
-        /* COLLEGE NAME */
-        .college-name {
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            color: rgba(67, 73, 250, 0.927);
-            margin-bottom: 10px;
-        }
-
-        /* MAIN TITLE */
-        .glass-card h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color:  #fff702;
-            line-height: 1.2;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
-        }
-
-        /* SUBTITLE */
-        .glass-card p {
-            font-size: 15px;
-            color: rgba(255,255,255,0.65);
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-
-        /* DIVIDER */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255,255,255,0.18);
-        }
-        .divider span {
-            font-size: 12px;
-            color: rgba(255,255,255,0.40);
-            letter-spacing: 1px;
-        }
-
-        /* BUTTONS */
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: transform 0.18s, box-shadow 0.18s, background 0.2s;
-        }
-        .btn:hover { transform: translateY(-2px); }
-
-        .btn-login, .btn-register {
-            background: #ffffff;
-            color: #111827;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-            border: none;
-        }
-        .btn-login:hover, .btn-register:hover {
-            background: linear-gradient(to right, #d4ff00, #4caf50);
-            color: #fff;
-            box-shadow: 0 4px 20px rgba(76,175,80,0.4);
-        }
-
-        /* FOOTER TAG */
-        .footer-tag {
-            margin-top: 20px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.35);
-            letter-spacing: 0.5px;
-        }
-        .footer-tag span { color: rgba(255,255,255,0.55); }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="glass-card">
-
-        <!-- College Logo -->
-        <div class="card-badge">
-            <img src="images/mealogo.jpg" alt="MEA Engineering College Logo">
+    <!-- UNIFIED APP NAVBAR -->
+    <header class="app-navbar">
+        <div class="nav-brand" onclick="window.location.href='index.html'">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div class="nav-title-wrap">
+                <span class="nav-title">Smart Attendance</span>
+                <span class="nav-subtitle">MEA Engineering College</span>
+            </div>
         </div>
 
-        <!-- College -->
-        <p class="college-name">MEA Engineering College</p>
-
-        <!-- Title -->
-        <h1>Smart Attendance System</h1>
-
-        <!-- Subtitle -->
-        <p>Mark and manage attendance effortlessly using QR codes</p>
-
-        <div class="divider"><span>GET STARTED</span></div>
-
-        <!-- Buttons -->
-        <div class="btn-group">
-            <button class="btn btn-login" onclick="window.location.href='login.html'">
+        <div class="nav-actions">
+            <a href="login.html" class="btn-nav">
                 <i class="fa-solid fa-right-to-bracket"></i> Sign In
-            </button>
-            <button class="btn btn-register" onclick="window.location.href='register.html'">
-                <i class="fa-solid fa-user-plus"></i> Create Account
-            </button>
+            </a>
+            <a href="register.html" class="btn-nav btn-nav-primary">
+                <i class="fa-solid fa-user-plus"></i> Register
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN BENTO CONTAINER -->
+    <main class="bento-container" style="max-width: 1100px; padding-top: 32px;">
+        
+        <div class="bento-grid">
+
+            <!-- HERO BENTO CARD WITH AI ILLUSTRATION -->
+            <div class="bento-card span-12" style="padding: 0; display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);">
+                <div style="flex: 1; padding: 40px 36px; min-width: 300px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+                        <img src="images/mealogo.jpg" alt="MEA Logo" style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--primary-light);">
+                        <span style="font-size: 13px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.06em;">MEA Engineering College</span>
+                    </div>
+
+                    <h1 style="font-size: 38px; font-weight: 800; color: var(--text-primary); line-height: 1.15; margin-bottom: 14px;">
+                        Smart Attendance <span style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">QR Portal</span>
+                    </h1>
+
+                    <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 28px; line-height: 1.5;">
+                        Fast, secure QR-based classroom check-ins with automated attendance percentages and instant reports.
+                    </p>
+
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                        <a href="login.html" class="btn-primary-block" style="width: auto; padding: 13px 32px; font-size: 16px;">
+                            <i class="fa-solid fa-right-to-bracket"></i> Sign In Now
+                        </a>
+                        <a href="register.html" class="btn-nav" style="padding: 13px 24px; font-size: 15px;">
+                            <i class="fa-solid fa-user-plus"></i> Create Account
+                        </a>
+                    </div>
+                </div>
+
+                <!-- AI Hero Visual Graphic -->
+                <div style="flex: 1; min-width: 320px; max-height: 380px; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 20px;">
+                    <img src="images/hero.jpg" alt="Smart Attendance System" style="width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-md); box-shadow: var(--shadow-lg);">
+                </div>
+            </div>
+
+            <!-- QUICK FEATURE CARD 1 -->
+            <div class="bento-card span-4" style="text-align: center; align-items: center;">
+                <div class="bento-title-icon blue" style="width: 52px; height: 52px; font-size: 24px; margin-bottom: 12px;">
+                    <i class="fa-solid fa-camera-retro"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Instant QR Scan</h3>
+                <p style="font-size: 13px; color: var(--text-secondary);">Students scan live teacher QR codes from any mobile device in seconds.</p>
+            </div>
+
+            <!-- QUICK FEATURE CARD 2 -->
+            <div class="bento-card span-4" style="text-align: center; align-items: center;">
+                <div class="bento-title-icon emerald" style="width: 52px; height: 52px; font-size: 24px; margin-bottom: 12px;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Live Analytics</h3>
+                <p style="font-size: 13px; color: var(--text-secondary);">Real-time percentage ring charts and subject attendance progress tracking.</p>
+            </div>
+
+            <!-- QUICK FEATURE CARD 3 -->
+            <div class="bento-card span-4" style="text-align: center; align-items: center;">
+                <div class="bento-title-icon purple" style="width: 52px; height: 52px; font-size: 24px; margin-bottom: 12px;">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">PDF Export</h3>
+                <p style="font-size: 13px; color: var(--text-secondary);">Teachers export session attendance sheets directly into formatted PDFs.</p>
+            </div>
+
         </div>
 
-        
+    </main>
 
-    </div>
-
+    <script src="script.js"></script>
 </body>
 </html>

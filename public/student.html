@@ -3,412 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard</title>
+    <title>Student Dashboard — Smart Attendance System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f4ff;
-            min-height: 100vh;
-        }
-
-        /* ── TOP NAVBAR ── */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 32px;
-            background: #fff;
-            border-bottom: 1px solid #e5eaf5;
-        }
-
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border: 1.5px solid #dce6ff;
-            border-radius: 10px;
-            background: #fff;
-            color: #2563eb;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .nav-btn:hover { background: #f0f4ff; }
-
-        .navbar h1 {
-            font-size: 26px;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        /* ── PAGE BODY ── */
-        .page {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 28px 24px;
-        }
-
-        /* Welcome text */
-        .welcome {
-            text-align: center;
-            font-size: 17px;
-            color: #6b7280;
-            margin-bottom: 22px;
-        }
-
-        .welcome span {
-            color: #2563eb;
-            font-weight: 700;
-        }
-
-        /* ── SCAN BUTTON ── */
-        .scan-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            max-width: 520px;
-            margin: 0 auto 28px auto;
-            padding: 18px;
-            background: #fff;
-            border: 2px solid #2563eb;
-            border-radius: 12px;
-            color: #2563eb;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-        }
-
-        .scan-btn:hover {
-            background: #eff6ff;
-            transform: scale(1.01);
-        }
-
-        /* QR reader */
-        #reader {
-            width: 300px;
-            margin: 0 auto 12px auto;
-        }
-
-        #result {
-            text-align: center;
-            color: #2563eb;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        /* ── STATS CARD ── */
-        .stats-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 32px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 32px;
-            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
-        }
-
-        /* Left / Right stat block */
-        .stat-block {
-            flex: 1;
-            text-align: center;
-        }
-
-        .stat-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin: 0 auto 10px auto;
-        }
-
-        .stat-icon.green { background: #dcfce7; color: #16a34a; }
-        .stat-icon.blue  { background: #dbeafe; color: #2563eb; }
-
-        .stat-label {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 6px;
-        }
-
-        .stat-number {
-            font-size: 36px;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .stat-number.green { color: #16a34a; }
-        .stat-number.blue  { color: #2563eb; }
-
-        .stat-sub {
-            font-size: 14px;
-            color: #9ca3af;
-            margin-top: 4px;
-        }
-
-        /* Dividers inside stats card */
-        .stat-divider {
-            width: 1px;
-            height: 90px;
-            background: #e5eaf5;
-        }
-
-        /* ── CIRCLE CHART AREA ── */
-        .circle-area {
-            flex: 1.4;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .circle-area h3 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 14px;
-        }
-
-        .circle-wrap {
-            position: relative;
-            width: 180px;
-            height: 180px;
-        }
-
-        .circle-wrap svg {
-            transform: rotate(-90deg);
-        }
-
-        #circleText {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        #circleText .pct {
-            font-size: 26px;
-            font-weight: 800;
-            color: #111827;
-            display: block;
-        }
-
-        #circleText .pct-label {
-            font-size: 13px;
-            color: #9ca3af;
-        }
-
-        #progressCircle {
-            transition: stroke-dashoffset 1s ease;
-        }
-
-        /* ── SUBJECT ATTENDANCE ── */
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 16px;
-        }
-
-        .subjects-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        @media (max-width: 640px) {
-            .subjects-grid { grid-template-columns: 1fr; }
-            .stats-card { flex-direction: column; }
-            .stat-divider { width: 90%; height: 1px; }
-        }
-
-        .subject-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(37,99,235,0.05);
-        }
-
-        .subject-card-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .subject-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: #111827;
-        }
-
-        .subject-pct {
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        /* progress bar */
-        .progress-bar-bg {
-            height: 5px;
-            background: #e5eaf5;
-            border-radius: 99px;
-            margin-bottom: 16px;
-        }
-
-        .progress-bar-fill {
-            height: 5px;
-            border-radius: 99px;
-            transition: width 0.8s ease;
-        }
-
-        /* stats row inside each subject card */
-        .subject-stats {
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid #f0f4ff;
-            padding-top: 12px;
-        }
-
-        .sub-stat {
-            text-align: center;
-        }
-
-        .sub-stat-label {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-bottom: 4px;
-        }
-
-        .sub-stat-value {
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        /* subject color classes */
-        .c-purple { color: #7c3aed; }
-        .c-blue   { color: #2563eb; }
-        .c-green  { color: #16a34a; }
-        .c-orange { color: #ea580c; }
-
-        .bg-purple { background: #7c3aed; }
-        .bg-blue   { background: #2563eb; }
-        .bg-green  { background: #16a34a; }
-        .bg-orange { background: #ea580c; }
-
-        /* dividers between sub-stat columns */
-        .sub-divider {
-            width: 1px;
-            background: #e5eaf5;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <button class="nav-btn" onclick="window.location.href='index.html'">
-            <i class="fa-solid fa-house"></i> Home
-        </button>
-        <h1>Student Dashboard</h1>
-        <button class="nav-btn" onclick="logout()">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
-    </div>
+    <!-- UNIFIED APP NAVBAR -->
+    <header class="app-navbar">
+        <div class="nav-brand" onclick="window.location.href='index.html'">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <div class="nav-title-wrap">
+                <span class="nav-title">Smart Attendance</span>
+                <span class="nav-subtitle">Student Dashboard</span>
+            </div>
+        </div>
 
-    <!-- PAGE CONTENT -->
-    <div class="page">
-
-        <!-- Welcome -->
-        <p class="welcome">Welcome, <span id="welcomeText">Student</span></p>
-
-        <!-- Scan QR Button -->
-        <button class="scan-btn" onclick="openScanner()">
-            <i class="fa-solid fa-qrcode" style="font-size:22px;"></i>
-            Scan QR to Mark Attendance
-        </button>
-
-        <!-- QR Reader -->
-        <div id="reader"></div>
-        <p id="result"></p>
-
-        <!-- Stats Card -->
-        <div class="stats-card">
-
-            <!-- Total Present -->
-            <div class="stat-block">
-                <div class="stat-icon green">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <p class="stat-label">Total Present</p>
-                <p class="stat-number green" id="presentCount">0</p>
-                <p class="stat-sub">Classes</p>
+        <div class="nav-actions">
+            <div class="user-badge">
+                <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+                <span class="user-name" id="navUserName">Student</span>
+                <span class="role-pill student">Student</span>
             </div>
 
-            <div class="stat-divider"></div>
+            <button class="btn-nav btn-nav-danger" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </header>
 
-            <!-- Circle -->
-            <div class="circle-area">
-                <h3>Overall Attendance</h3>
-                <div class="circle-wrap">
-                    <svg width="180" height="180">
-                        <circle cx="90" cy="90" r="70"
-                            stroke="#e6e6e6" stroke-width="14" fill="none"></circle>
-                        <circle id="progressCircle"
-                            cx="90" cy="90" r="70"
-                            stroke="#16a34a" stroke-width="14" fill="none"
-                            stroke-linecap="round"
-                            stroke-dasharray="440"
-                            stroke-dashoffset="440"></circle>
-                    </svg>
-                    <div id="circleText">
-                        <span class="pct" id="pctText">0%</span>
-                        <span class="pct-label">Overall</span>
+    <!-- MAIN BENTO CONTAINER -->
+    <main class="bento-container">
+
+        <!-- GREETING HEADER WITH SCANNER LAUNCHER -->
+        <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+            <div>
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary);">
+                    Welcome back, <span id="welcomeText" style="color: var(--primary);">Student</span>!
+                </h1>
+                <p style="font-size: 14px; color: var(--text-secondary);">Track your attendance metrics or scan an active classroom session QR code.</p>
+            </div>
+
+            <button class="btn-primary-block" onclick="openScannerModal()" style="width: auto; padding: 12px 24px;">
+                <i class="fa-solid fa-qrcode" style="font-size: 18px;"></i> Open QR Camera Scanner
+            </button>
+        </div>
+
+        <div class="bento-grid">
+
+            <!-- BENTO STAT 1: OVERALL CIRCLE PROGRESS -->
+            <div class="bento-card span-4" style="align-items: center; justify-content: center;">
+                <div class="bento-card-header" style="width: 100%;">
+                    <span class="bento-card-title">
+                        <div class="bento-title-icon emerald"><i class="fa-solid fa-chart-pie"></i></div>
+                        Overall Percentage
+                    </span>
+                </div>
+
+                <div class="circle-chart-container">
+                    <div class="circle-svg-wrap">
+                        <svg width="190" height="190">
+                            <circle cx="95" cy="95" r="70" stroke="var(--bg-subtle)" stroke-width="14" fill="none"></circle>
+                            <circle id="progressCircle" cx="95" cy="95" r="70"
+                                stroke="var(--success)" stroke-width="14" fill="none"
+                                stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440"
+                                style="transition: stroke-dashoffset 1s ease-out;"></circle>
+                        </svg>
+                        <div class="circle-center-text">
+                            <span class="circle-pct-number" id="pctText">0%</span>
+                            <span class="circle-pct-label">Average</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="stat-divider"></div>
-
-            <!-- Total Classes -->
-            <div class="stat-block">
-                <div class="stat-icon blue">
-                    <i class="fa-regular fa-calendar"></i>
+            <!-- BENTO STAT 2: TOTAL PRESENT -->
+            <div class="bento-card span-4 stat-bento-card" style="justify-content: center;">
+                <div class="stat-icon-wrapper" style="background: var(--success-light); color: var(--success);">
+                    <i class="fa-solid fa-circle-check"></i>
                 </div>
-                <p class="stat-label">Total Classes</p>
-                <p class="stat-number blue" id="totalClasses">0</p>
-                <p class="stat-sub">Classes</p>
+                <div class="stat-info-wrap">
+                    <span class="stat-label-text">Total Present</span>
+                    <span class="stat-value-num" id="presentCount" style="color: var(--success);">0</span>
+                    <span style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Classes Attended</span>
+                </div>
+            </div>
+
+            <!-- BENTO STAT 3: TOTAL CLASSES -->
+            <div class="bento-card span-4 stat-bento-card" style="justify-content: center;">
+                <div class="stat-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                    <i class="fa-regular fa-calendar-check"></i>
+                </div>
+                <div class="stat-info-wrap">
+                    <span class="stat-label-text">Total Conducted</span>
+                    <span class="stat-value-num" id="totalClasses" style="color: var(--primary);">0</span>
+                    <span style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Total Held Classes</span>
+                </div>
+            </div>
+
+            <!-- MANUAL CODE ENTRY BENTO CARD -->
+            <div class="bento-card span-12">
+                <div class="bento-card-header">
+                    <span class="bento-card-title">
+                        <div class="bento-title-icon blue"><i class="fa-solid fa-keyboard"></i></div>
+                        Manual Session Code Entry
+                    </span>
+                </div>
+                
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                    <div class="input-with-icon" style="flex: 1; min-width: 240px;">
+                        <input type="text" class="form-input" id="sessionCode" placeholder="Enter 6-character session code (e.g. ab12cd)...">
+                        <i class="fa-solid fa-key input-icon"></i>
+                    </div>
+                    <button class="btn-primary-block" onclick="markAttendance()" style="width: auto; padding: 12px 24px;">
+                        <i class="fa-solid fa-check"></i> Submit Code
+                    </button>
+                </div>
+            </div>
+
+            <!-- SUBJECT ATTENDANCE BENTO CARD (FULL WIDTH) -->
+            <div class="bento-card span-12">
+                <div class="bento-card-header">
+                    <span class="bento-card-title">
+                        <div class="bento-title-icon purple"><i class="fa-solid fa-book-open"></i></div>
+                        Enrolled Subject Attendance
+                    </span>
+
+                    <div style="width: 240px;">
+                        <div class="input-with-icon">
+                            <input type="text" class="form-input" placeholder="Search subjects..." onkeyup="filterTable(this.id, 'percentageList')" id="subjectSearchInput" style="padding-top: 8px; padding-bottom: 8px; font-size: 13px;">
+                            <i class="fa-solid fa-magnifying-glass input-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject Cards Container -->
+                <div class="subject-bento-grid" id="percentageList">
+                    <!-- Dynamic subjects injected by script.js -->
+                </div>
             </div>
 
         </div>
 
-        <!-- Subject Attendance -->
-        <p class="section-title">Subject Attendance</p>
+    </main>
 
-        <div class="subjects-grid" id="percentageList">
-            <!-- Subject cards injected by JS -->
+    <!-- QR CAMERA SCANNER MODAL -->
+    <div class="modal-overlay" id="scannerModal">
+        <div class="modal-content">
+            <button type="button" class="modal-close-btn" onclick="closeScannerModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div style="text-align: center; margin-bottom: 14px;">
+                <div style="width: 100%; height: 140px; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 12px;">
+                    <img src="images/student_scan.jpg" alt="Scan QR Illustration" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h3 style="font-size: 20px; font-weight: 800; color: var(--text-primary);">QR Camera Scanner</h3>
+                <p style="font-size: 13px; color: var(--text-muted);">Point camera at teacher's session QR code</p>
+            </div>
+
+            <!-- QR Reader Video Container -->
+            <div id="reader" style="width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); background: #000;"></div>
+            
+            <p id="result" style="text-align: center; font-size: 14px; font-weight: 700; color: var(--primary); margin-top: 14px; min-height: 20px;"></p>
         </div>
-
     </div>
 
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="script.js"></script>
-
 </body>
 </html>

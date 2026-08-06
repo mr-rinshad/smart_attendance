@@ -3,381 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard — Smart Attendance System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #f0f4ff;
-            min-height: 100vh;
-        }
-
-        /* ── NAVBAR ── */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 32px;
-            background: #fff;
-            border-bottom: 1px solid #e5eaf5;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border: 1.5px solid #dce6ff;
-            border-radius: 10px;
-            background: #fff;
-            color: #2563eb;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .nav-btn:hover { background: #f0f4ff; }
-        .nav-btn.danger {
-            color: #ef4444;
-            border-color: #fecaca;
-        }
-        .nav-btn.danger:hover { background: #fff5f5; }
-        .navbar h1 { font-size: 24px; font-weight: 700; color: #111827; }
-
-        /* ── PAGE ── */
-        .page {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 28px 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* ── STAT CARDS ── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-        .stat-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 22px 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
-        }
-        .stat-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-        .stat-icon.blue   { background: #dbeafe; color: #2563eb; }
-        .stat-icon.green  { background: #dcfce7; color: #16a34a; }
-        .stat-icon.purple { background: #ede9fe; color: #7c3aed; }
-        .stat-icon.orange { background: #ffedd5; color: #ea580c; }
-        .stat-info p { font-size: 13px; color: #9ca3af; margin-bottom: 4px; }
-        .stat-info h2 { font-size: 28px; font-weight: 800; color: #111827; }
-
-        /* ── SECTION CARD ── */
-        .section-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
-        }
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 18px;
-        }
-        .section-title {
-            font-size: 17px;
-            font-weight: 700;
-            color: #111827;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-title i {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-        }
-        .section-title i.blue   { background: #dbeafe; color: #2563eb; }
-        .section-title i.green  { background: #dcfce7; color: #16a34a; }
-        .section-title i.purple { background: #ede9fe; color: #7c3aed; }
-        .section-title i.red    { background: #fee2e2; color: #ef4444; }
-
-        /* ── ADD SUBJECT ROW ── */
-        .add-row {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        .add-row input {
-            flex: 1;
-            padding: 11px 16px;
-            border: 1.5px solid #e5eaf5;
-            border-radius: 10px;
-            font-size: 14px;
-            color: #111827;
-            background: #fafbff;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .add-row input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
-        }
-        .add-row input::placeholder { color: #c4c9d4; }
-
-        /* ── BUTTONS ── */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 11px 18px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            white-space: nowrap;
-        }
-        .btn:hover { transform: scale(1.02); }
-        .btn-primary { background: #2563eb; color: #fff; }
-        .btn-primary:hover { background: #1d4ed8; }
-        .btn-outline {
-            background: #fff;
-            color: #2563eb;
-            border: 1.5px solid #dce6ff;
-        }
-        .btn-outline:hover { background: #f0f4ff; }
-        .btn-danger { background: #fff; color: #ef4444; border: 1.5px solid #fecaca; }
-        .btn-danger:hover { background: #fff5f5; }
-
-        /* ── TABLE ── */
-        .table-wrap { overflow-x: auto; }
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .admin-table thead tr { background: #f0f4ff; }
-        .admin-table th {
-            padding: 12px 16px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            text-align: left;
-        }
-        .admin-table th:last-child,
-        .admin-table td:last-child { text-align: right; }
-        .admin-table td {
-            padding: 13px 16px;
-            font-size: 14px;
-            color: #374151;
-            border-bottom: 1px solid #f0f4ff;
-        }
-        .admin-table tbody tr:last-child td { border-bottom: none; }
-        .admin-table tbody tr:hover { background: #fafbff; }
-
-        .del-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #ef4444;
-            font-size: 16px;
-            padding: 6px 10px;
-            border-radius: 8px;
-            transition: background 0.2s;
-        }
-        .del-btn:hover { background: #fee2e2; }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 32px;
-            color: #9ca3af;
-            font-size: 14px;
-        }
-        .empty-state i { font-size: 32px; margin-bottom: 10px; display: block; color: #dce6ff; }
-
-        /* Reset danger zone */
-        .danger-zone {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            background: #fff5f5;
-            border: 1.5px solid #fecaca;
-            border-radius: 12px;
-        }
-        .danger-zone-text p { font-size: 14px; font-weight: 600; color: #ef4444; }
-        .danger-zone-text span { font-size: 13px; color: #9ca3af; }
-
-        @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .navbar { padding: 12px 16px; }
-            .page { padding: 16px; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
-        <button class="nav-btn" onclick="window.location.href='index.html'">
-            <i class="fa-solid fa-house"></i> Home
-        </button>
-        <h1>Admin Dashboard</h1>
-        <button class="nav-btn" onclick="logout()">
-            <i class="fa-solid fa-right-from-bracket"></i> Logout
-        </button>
-    </div>
-
-    <div class="page">
-
-        <!-- ── STAT CARDS ── -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="fa-solid fa-user-graduate"></i></div>
-                <div class="stat-info">
-                    <p>Total Students</p>
-                    <h2 id="totalStudents">0</h2>
-                </div>
+    <!-- UNIFIED APP NAVBAR -->
+    <header class="app-navbar">
+        <div class="nav-brand" onclick="window.location.href='index.html'">
+            <div class="nav-logo-icon">
+                <i class="fa-solid fa-qrcode"></i>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <div class="stat-info">
-                    <p>Total Teachers</p>
-                    <h2 id="totalTeachers">0</h2>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple"><i class="fa-solid fa-book"></i></div>
-                <div class="stat-info">
-                    <p>Total Subjects</p>
-                    <h2 id="totalSubjects">0</h2>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon orange"><i class="fa-solid fa-calendar-check"></i></div>
-                <div class="stat-info">
-                    <p>Total Sessions</p>
-                    <h2 id="totalSessions">0</h2>
-                </div>
+            <div class="nav-title-wrap">
+                <span class="nav-title">Smart Attendance</span>
+                <span class="nav-subtitle">System Administrator</span>
             </div>
         </div>
 
-        <!-- ── SUBJECTS ── -->
-        <div class="section-card">
-            <div class="section-header">
-                <div class="section-title">
-                    <i class="fa-solid fa-book purple"></i>
-                    Subjects
+        <div class="nav-actions">
+            <div class="user-badge">
+                <div class="user-avatar"><i class="fa-solid fa-user-shield"></i></div>
+                <span class="user-name" id="navUserName">Admin</span>
+                <span class="role-pill admin">Admin</span>
+            </div>
+
+            <button class="btn-nav btn-nav-danger" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN BENTO CONTAINER -->
+    <main class="bento-container">
+
+        <!-- GREETING HEADER WITH AI GRAPHIC -->
+        <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 243, 255, 0.95) 100%); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+            <div>
+                <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary);">
+                    Administrator Control Panel
+                </h1>
+                <p style="font-size: 14px; color: var(--text-secondary);">Manage campus courses, student rosters, teacher accounts, and database records.</p>
+            </div>
+
+            <div style="width: 180px; height: 90px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm);">
+                <img src="images/admin_graphic.jpg" alt="Admin Graphic" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        </div>
+
+        <div class="bento-grid">
+
+            <!-- STAT 1: STUDENTS -->
+            <div class="bento-card span-3 stat-bento-card">
+                <div class="stat-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                    <i class="fa-solid fa-user-graduate"></i>
                 </div>
-                <button class="btn btn-outline" id="toggleSubjectsBtn" onclick="toggleSection('subjects')">
-                    <i class="fa-solid fa-eye"></i> Show
-                </button>
+                <div class="stat-info-wrap">
+                    <span class="stat-label-text">Total Students</span>
+                    <span class="stat-value-num" id="totalStudents" style="color: var(--primary);">0</span>
+                </div>
             </div>
-            <!-- Add Subject -->
-            <div class="add-row" style="margin-bottom:18px;">
-                <input type="text" id="subjectName" placeholder="Enter new subject name...">
-                <button class="btn btn-primary" onclick="addSubject()">
-                    <i class="fa-solid fa-plus"></i> Add Subject
-                </button>
+
+            <!-- STAT 2: TEACHERS -->
+            <div class="bento-card span-3 stat-bento-card">
+                <div class="stat-icon-wrapper" style="background: var(--success-light); color: var(--success);">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
+                <div class="stat-info-wrap">
+                    <span class="stat-label-text">Total Teachers</span>
+                    <span class="stat-value-num" id="totalTeachers" style="color: var(--success);">0</span>
+                </div>
             </div>
-            <div class="table-wrap" id="subjectsWrap" style="display:none;">
-                <div id="subjectsList">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-book"></i>
-                        No subjects added yet.
+
+            <!-- STAT 3: SUBJECTS -->
+            <div class="bento-card span-3 stat-bento-card">
+                <div class="stat-icon-wrapper" style="background: var(--purple-light); color: var(--purple);">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div class="stat-info-wrap">
+                    <span class="stat-label-text">Total Subjects</span>
+                    <span class="stat-value-num" id="totalSubjects" style="color: var(--purple);">0</span>
+                </div>
+            </div>
+
+            <!-- STAT 4: SESSIONS -->
+            <div class="bento-card span-3 stat-bento-card">
+                <div class="stat-icon-wrapper" style="background: var(--warning-light); color: var(--warning);">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div class="stat-info-wrap">
+                    <span class="stat-label-text">Total Sessions</span>
+                    <span class="stat-value-num" id="totalSessions" style="color: var(--warning);">0</span>
+                </div>
+            </div>
+
+            <!-- SUBJECT MANAGEMENT BENTO CARD (FULL WIDTH) -->
+            <div class="bento-card span-12">
+                <div class="bento-card-header">
+                    <span class="bento-card-title">
+                        <div class="bento-title-icon purple"><i class="fa-solid fa-book-open"></i></div>
+                        Course / Subject Management
+                    </span>
+
+                    <button class="btn-nav" id="toggleSubjectsBtn" onclick="toggleSection('subjects')">
+                        <i class="fa-solid fa-eye"></i> Show
+                    </button>
+                </div>
+
+                <!-- Add Subject Input Form -->
+                <div style="display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap;">
+                    <div class="input-with-icon" style="flex: 1; min-width: 240px;">
+                        <input type="text" class="form-input" id="subjectName" placeholder="Enter new subject name (e.g. Artificial Intelligence)...">
+                        <i class="fa-solid fa-plus input-icon"></i>
                     </div>
+                    <button class="btn-primary-block" onclick="addSubject()" style="width: auto; padding: 12px 24px;">
+                        <i class="fa-solid fa-plus"></i> Add Subject
+                    </button>
                 </div>
-            </div>
-        </div>
 
-        <!-- ── STUDENTS ── -->
-        <div class="section-card">
-            <div class="section-header">
-                <div class="section-title">
-                    <i class="fa-solid fa-user-graduate blue"></i>
-                    Students
+                <!-- Subjects Collapsible Wrap -->
+                <div id="subjectsWrap" style="display: none;">
+                    <div id="subjectsList"></div>
                 </div>
-                <button class="btn btn-outline" id="toggleStudentsBtn" onclick="toggleSection('students')">
-                    <i class="fa-solid fa-eye"></i> Show
-                </button>
             </div>
-            <div class="table-wrap" id="studentsWrap" style="display:none;">
-                <div id="studentsList">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-user-graduate"></i>
-                        No students registered yet.
+
+            <!-- STUDENTS DIRECTORY BENTO CARD -->
+            <div class="bento-card span-6">
+                <div class="bento-card-header">
+                    <span class="bento-card-title">
+                        <div class="bento-title-icon blue"><i class="fa-solid fa-user-graduate"></i></div>
+                        Students Directory
+                    </span>
+
+                    <button class="btn-nav" id="toggleStudentsBtn" onclick="toggleSection('students')">
+                        <i class="fa-solid fa-eye"></i> Show
+                    </button>
+                </div>
+
+                <div id="studentsWrap" style="display: none;">
+                    <div id="studentsList"></div>
+                </div>
+            </div>
+
+            <!-- TEACHERS DIRECTORY BENTO CARD -->
+            <div class="bento-card span-6">
+                <div class="bento-card-header">
+                    <span class="bento-card-title">
+                        <div class="bento-title-icon emerald"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        Teachers Directory
+                    </span>
+
+                    <button class="btn-nav" id="toggleTeachersBtn" onclick="toggleSection('teachers')">
+                        <i class="fa-solid fa-eye"></i> Show
+                    </button>
+                </div>
+
+                <div id="teachersWrap" style="display: none;">
+                    <div id="teachersList"></div>
+                </div>
+            </div>
+
+            <!-- DANGER ZONE BENTO CARD (FULL WIDTH) -->
+            <div class="bento-card span-12" style="background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(254, 242, 242, 0.95) 100%); border-color: #fecaca;">
+                <div class="bento-card-header">
+                    <span class="bento-card-title" style="color: var(--danger);">
+                        <div class="bento-title-icon danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        Danger Zone — Reset Database
+                    </span>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <h4 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">Reset All Attendance Logs</h4>
+                        <p style="font-size: 13px; color: var(--text-secondary);">This action will permanently delete all recorded attendance logs from all sessions.</p>
                     </div>
+
+                    <button class="action-btn-danger" onclick="resetAttendance()" style="padding: 12px 24px; font-size: 14px;">
+                        <i class="fa-solid fa-trash"></i> Reset All Attendance Records
+                    </button>
                 </div>
             </div>
+
         </div>
 
-        <!-- ── TEACHERS ── -->
-        <div class="section-card">
-            <div class="section-header">
-                <div class="section-title">
-                    <i class="fa-solid fa-chalkboard-user green"></i>
-                    Teachers
-                </div>
-                <button class="btn btn-outline" id="toggleTeachersBtn" onclick="toggleSection('teachers')">
-                    <i class="fa-solid fa-eye"></i> Show
-                </button>
-            </div>
-            <div class="table-wrap" id="teachersWrap" style="display:none;">
-                <div id="teachersList">
-                    <div class="empty-state">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                        No teachers registered yet.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── DANGER ZONE ── -->
-        <div class="section-card">
-            <div class="section-title" style="margin-bottom:16px;">
-                <i class="fa-solid fa-triangle-exclamation red"></i>
-                Danger Zone
-            </div>
-            <div class="danger-zone">
-                <div class="danger-zone-text">
-                    <p>Reset All Attendance</p>
-                    <span>This will permanently delete all attendance records.</span>
-                </div>
-                <button class="btn btn-danger" onclick="resetAttendance()">
-                    <i class="fa-solid fa-trash"></i> Reset Attendance
-                </button>
-            </div>
-        </div>
-
-    </div>
+    </main>
 
     <script src="script.js"></script>
 </body>
