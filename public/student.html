@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- UNIFIED APP NAVBAR -->
+    <!-- UNIFIED APP NAVBAR (RESPONSIVE) -->
     <header class="app-navbar">
         <div class="nav-brand" onclick="window.location.href='index.html'">
             <div class="nav-logo-icon">
@@ -38,16 +38,16 @@
     <main class="bento-container">
 
         <!-- GREETING HEADER WITH SCANNER LAUNCHER -->
-        <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+        <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 248, 230, 0.95) 100%); padding: 24px; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color);">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary);">
-                    Welcome back, <span id="welcomeText" style="color: var(--primary);">Student</span>!
+                    Welcome back, <span id="welcomeText" style="color: #b58000;">Student</span>!
                 </h1>
                 <p style="font-size: 14px; color: var(--text-secondary);">Track your attendance metrics or scan an active classroom session QR code.</p>
             </div>
 
-            <button class="btn-primary-block" onclick="openScannerModal()" style="width: auto; padding: 12px 24px;">
-                <i class="fa-solid fa-qrcode" style="font-size: 18px;"></i> Open QR Camera Scanner
+            <button class="btn-primary-block" onclick="openScannerModal()" style="width: auto; min-width: 220px; padding: 12px 24px;">
+                <i class="fa-solid fa-qrcode" style="font-size: 18px;"></i> Open Camera Scanner
             </button>
         </div>
 
@@ -57,7 +57,7 @@
             <div class="bento-card span-4" style="align-items: center; justify-content: center;">
                 <div class="bento-card-header" style="width: 100%;">
                     <span class="bento-card-title">
-                        <div class="bento-title-icon emerald"><i class="fa-solid fa-chart-pie"></i></div>
+                        <div class="bento-title-icon gold"><i class="fa-solid fa-chart-pie"></i></div>
                         Overall Percentage
                     </span>
                 </div>
@@ -65,9 +65,9 @@
                 <div class="circle-chart-container">
                     <div class="circle-svg-wrap">
                         <svg width="190" height="190">
-                            <circle cx="95" cy="95" r="70" stroke="var(--bg-subtle)" stroke-width="14" fill="none"></circle>
+                            <circle cx="95" cy="95" r="70" stroke="var(--cream-subtle)" stroke-width="14" fill="none"></circle>
                             <circle id="progressCircle" cx="95" cy="95" r="70"
-                                stroke="var(--success)" stroke-width="14" fill="none"
+                                stroke="var(--gold-amber)" stroke-width="14" fill="none"
                                 stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440"
                                 style="transition: stroke-dashoffset 1s ease-out;"></circle>
                         </svg>
@@ -81,7 +81,7 @@
 
             <!-- BENTO STAT 2: TOTAL PRESENT -->
             <div class="bento-card span-4 stat-bento-card" style="justify-content: center;">
-                <div class="stat-icon-wrapper" style="background: var(--success-light); color: var(--success);">
+                <div class="stat-icon-wrapper" style="background: var(--success-light); color: var(--success); border: 1px solid var(--success);">
                     <i class="fa-solid fa-circle-check"></i>
                 </div>
                 <div class="stat-info-wrap">
@@ -93,12 +93,12 @@
 
             <!-- BENTO STAT 3: TOTAL CLASSES -->
             <div class="bento-card span-4 stat-bento-card" style="justify-content: center;">
-                <div class="stat-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                <div class="stat-icon-wrapper" style="background: var(--gold-amber-light); color: #b58000; border: 1px solid var(--gold-amber);">
                     <i class="fa-regular fa-calendar-check"></i>
                 </div>
                 <div class="stat-info-wrap">
                     <span class="stat-label-text">Total Conducted</span>
-                    <span class="stat-value-num" id="totalClasses" style="color: var(--primary);">0</span>
+                    <span class="stat-value-num" id="totalClasses" style="color: #b58000;">0</span>
                     <span style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Total Held Classes</span>
                 </div>
             </div>
@@ -107,17 +107,17 @@
             <div class="bento-card span-12">
                 <div class="bento-card-header">
                     <span class="bento-card-title">
-                        <div class="bento-title-icon blue"><i class="fa-solid fa-keyboard"></i></div>
+                        <div class="bento-title-icon amber"><i class="fa-solid fa-keyboard"></i></div>
                         Manual Session Code Entry
                     </span>
                 </div>
                 
                 <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-                    <div class="input-with-icon" style="flex: 1; min-width: 240px;">
+                    <div class="input-with-icon" style="flex: 1; min-width: 220px;">
                         <input type="text" class="form-input" id="sessionCode" placeholder="Enter 6-character session code (e.g. ab12cd)...">
                         <i class="fa-solid fa-key input-icon"></i>
                     </div>
-                    <button class="btn-primary-block" onclick="markAttendance()" style="width: auto; padding: 12px 24px;">
+                    <button class="btn-primary-block" onclick="markAttendance()" style="width: auto; min-width: 160px; padding: 12px 24px;">
                         <i class="fa-solid fa-check"></i> Submit Code
                     </button>
                 </div>
@@ -131,9 +131,9 @@
                         Enrolled Subject Attendance
                     </span>
 
-                    <div style="width: 240px;">
+                    <div style="width: 100%; max-width: 260px;">
                         <div class="input-with-icon">
-                            <input type="text" class="form-input" placeholder="Search subjects..." onkeyup="filterTable(this.id, 'percentageList')" id="subjectSearchInput" style="padding-top: 8px; padding-bottom: 8px; font-size: 13px;">
+                            <input type="text" class="form-input" placeholder="Search subjects..." onkeyup="filterTable(this.id, 'percentageList')" id="subjectSearchInput" style="padding-top: 8px; padding-bottom: 8px; font-size: 14px; min-height: 40px;">
                             <i class="fa-solid fa-magnifying-glass input-icon"></i>
                         </div>
                     </div>
@@ -165,9 +165,9 @@
             </div>
 
             <!-- QR Reader Video Container -->
-            <div id="reader" style="width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-color); background: #000;"></div>
+            <div id="reader" style="width: 100%; border-radius: var(--radius-md); overflow: hidden; border: 1.5px solid var(--border-color); background: #000;"></div>
             
-            <p id="result" style="text-align: center; font-size: 14px; font-weight: 700; color: var(--primary); margin-top: 14px; min-height: 20px;"></p>
+            <p id="result" style="text-align: center; font-size: 14px; font-weight: 800; color: #b58000; margin-top: 14px; min-height: 20px;"></p>
         </div>
     </div>
 

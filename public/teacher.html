@@ -40,7 +40,7 @@
         <!-- GREETING HEADER -->
         <div style="margin-bottom: 24px;">
             <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary);">
-                Welcome, <span id="welcomeText" style="color: var(--primary);">Teacher</span>!
+                Welcome, <span id="welcomeText" style="color: #b58000;">Teacher</span>!
             </h1>
             <p style="font-size: 14px; color: var(--text-secondary);">Select a subject to generate a dynamic attendance session QR code.</p>
         </div>
@@ -52,7 +52,7 @@
                 <div>
                     <div class="bento-card-header">
                         <span class="bento-card-title">
-                            <div class="bento-title-icon blue"><i class="fa-solid fa-sliders"></i></div>
+                            <div class="bento-title-icon amber"><i class="fa-solid fa-sliders"></i></div>
                             New Attendance Session
                         </span>
                     </div>
@@ -97,7 +97,7 @@
 
                 <!-- STATE 1: DEFAULT EMPTY -->
                 <div id="stateEmpty" style="display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--text-muted);">
-                    <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--text-muted);">
+                    <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--cream-subtle); display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--text-muted);">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                     <h3 style="font-size: 18px; font-weight: 700; color: var(--text-secondary);">No Active Session</h3>
@@ -106,18 +106,18 @@
 
                 <!-- STATE 2: ACTIVE QR -->
                 <div id="stateActive" style="display: none; flex-direction: column; align-items: center; gap: 16px; width: 100%;">
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--success);">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--success);">
                         <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--success); display: inline-block; box-shadow: 0 0 10px var(--success);"></span>
                         Active Attendance QR
                     </div>
 
-                    <div style="padding: 12px; background: #ffffff; border: 2px solid var(--primary); border-radius: var(--radius-md); box-shadow: var(--shadow-md);">
+                    <div style="padding: 12px; background: #ffffff; border: 2px solid var(--gold-amber); border-radius: var(--radius-md); box-shadow: var(--shadow-md);">
                         <img id="qrImage" src="" alt="Session QR Code" style="width: 190px; height: 190px; display: block; border-radius: 6px;">
                     </div>
 
-                    <div style="padding: 10px 20px; background: var(--primary-light); border-radius: var(--radius-full); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-regular fa-clock" style="color: var(--primary); font-size: 18px;"></i>
-                        <span id="timerText" style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--primary);">QR Expires In: 00:00</span>
+                    <div style="padding: 10px 20px; background: var(--gold-amber-light); border-radius: var(--radius-full); border: 1.5px solid var(--border-color); display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-regular fa-clock" style="color: #b58000; font-size: 18px;"></i>
+                        <span id="timerText" style="font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: #b58000;">QR Expires In: 00:00</span>
                     </div>
                 </div>
 
@@ -145,13 +145,13 @@
                     </span>
 
                     <div style="display: flex; align-items: center; gap: 16px;">
-                        <span id="liveCount" style="padding: 8px 18px; background: var(--success-light); color: var(--success); border-radius: var(--radius-full); font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+                        <span id="liveCount" style="padding: 8px 18px; background: var(--gold-amber-light); color: #855b00; border: 1px solid var(--gold-amber); border-radius: var(--radius-full); font-size: 14px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">
                             <i class="fa-solid fa-users"></i> Total Present: 0
                         </span>
                     </div>
                 </div>
 
-                <!-- Live Attendance Log Container -->
+                <!-- Live Attendance Log Container (Touch Scrollable) -->
                 <div id="sessionAttendance" class="table-responsive">
                     <div style="text-align: center; padding: 32px; color: var(--text-muted);">
                         <i class="fa-solid fa-user-clock" style="font-size: 32px; margin-bottom: 8px; display: block;"></i>

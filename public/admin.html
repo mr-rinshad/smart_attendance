@@ -38,7 +38,7 @@
     <main class="bento-container">
 
         <!-- GREETING HEADER WITH AI GRAPHIC -->
-        <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 243, 255, 0.95) 100%); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+        <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 248, 230, 0.95) 100%); padding: 24px; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color);">
             <div>
                 <h1 style="font-size: 26px; font-weight: 800; color: var(--text-primary);">
                     Administrator Control Panel
@@ -55,18 +55,18 @@
 
             <!-- STAT 1: STUDENTS -->
             <div class="bento-card span-3 stat-bento-card">
-                <div class="stat-icon-wrapper" style="background: var(--primary-light); color: var(--primary);">
+                <div class="stat-icon-wrapper" style="background: var(--gold-amber-light); color: #b58000; border: 1px solid var(--gold-amber);">
                     <i class="fa-solid fa-user-graduate"></i>
                 </div>
                 <div class="stat-info-wrap">
                     <span class="stat-label-text">Total Students</span>
-                    <span class="stat-value-num" id="totalStudents" style="color: var(--primary);">0</span>
+                    <span class="stat-value-num" id="totalStudents" style="color: #b58000;">0</span>
                 </div>
             </div>
 
             <!-- STAT 2: TEACHERS -->
             <div class="bento-card span-3 stat-bento-card">
-                <div class="stat-icon-wrapper" style="background: var(--success-light); color: var(--success);">
+                <div class="stat-icon-wrapper" style="background: var(--success-light); color: var(--success); border: 1px solid var(--success);">
                     <i class="fa-solid fa-chalkboard-user"></i>
                 </div>
                 <div class="stat-info-wrap">
@@ -77,23 +77,23 @@
 
             <!-- STAT 3: SUBJECTS -->
             <div class="bento-card span-3 stat-bento-card">
-                <div class="stat-icon-wrapper" style="background: var(--purple-light); color: var(--purple);">
+                <div class="stat-icon-wrapper" style="background: var(--mauve-lavender-light); color: #7c3aed; border: 1px solid var(--mauve-lavender);">
                     <i class="fa-solid fa-book"></i>
                 </div>
                 <div class="stat-info-wrap">
                     <span class="stat-label-text">Total Subjects</span>
-                    <span class="stat-value-num" id="totalSubjects" style="color: var(--purple);">0</span>
+                    <span class="stat-value-num" id="totalSubjects" style="color: #7c3aed;">0</span>
                 </div>
             </div>
 
             <!-- STAT 4: SESSIONS -->
             <div class="bento-card span-3 stat-bento-card">
-                <div class="stat-icon-wrapper" style="background: var(--warning-light); color: var(--warning);">
+                <div class="stat-icon-wrapper" style="background: var(--warm-gold-light); color: #8a7315; border: 1px solid var(--warm-gold);">
                     <i class="fa-solid fa-calendar-check"></i>
                 </div>
                 <div class="stat-info-wrap">
                     <span class="stat-label-text">Total Sessions</span>
-                    <span class="stat-value-num" id="totalSessions" style="color: var(--warning);">0</span>
+                    <span class="stat-value-num" id="totalSessions" style="color: #8a7315;">0</span>
                 </div>
             </div>
 
@@ -112,11 +112,11 @@
 
                 <!-- Add Subject Input Form -->
                 <div style="display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap;">
-                    <div class="input-with-icon" style="flex: 1; min-width: 240px;">
+                    <div class="input-with-icon" style="flex: 1; min-width: 220px;">
                         <input type="text" class="form-input" id="subjectName" placeholder="Enter new subject name (e.g. Artificial Intelligence)...">
                         <i class="fa-solid fa-plus input-icon"></i>
                     </div>
-                    <button class="btn-primary-block" onclick="addSubject()" style="width: auto; padding: 12px 24px;">
+                    <button class="btn-primary-block" onclick="addSubject()" style="width: auto; min-width: 160px; padding: 12px 24px;">
                         <i class="fa-solid fa-plus"></i> Add Subject
                     </button>
                 </div>
@@ -131,7 +131,7 @@
             <div class="bento-card span-6">
                 <div class="bento-card-header">
                     <span class="bento-card-title">
-                        <div class="bento-title-icon blue"><i class="fa-solid fa-user-graduate"></i></div>
+                        <div class="bento-title-icon amber"><i class="fa-solid fa-user-graduate"></i></div>
                         Students Directory
                     </span>
 
